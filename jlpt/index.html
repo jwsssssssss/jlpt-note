@@ -119,7 +119,7 @@ main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
 .rf{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.rf[hidden]{display:none}
 .rfb{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer}
 .rfb[aria-pressed=true]{border-color:var(--ink);background:var(--paper);font-weight:700}
-.rfb b{font-weight:400;color:var(--sub);font-size:12px;margin-left:4px}
+.rfb b{font-weight:400;color:var(--sub);font-size:12px;margin-left:4px}.rfsep{flex-basis:100%;height:0}
 .inst{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 14px;min-height:40px;cursor:pointer}.inst[hidden]{display:none}
 html.sh-open{overflow:hidden}
 .sheet{position:fixed;inset:0;z-index:30}.sheet[hidden]{display:none}
@@ -399,6 +399,8 @@ function stSave(){const b=stBody();try{localStorage.setItem('odap-st',JSON.strin
   if(stRef){stQ=stQ.then(()=>stRef.set(Object.assign({},b,{t:Date.now()}))).catch(()=>{})}}
 const MF=[['todo','공부할 것'],['mem','외운 것'],['all','전체']];
 let mf='todo';try{const v=localStorage.getItem('odap-mf');if(MF.some(x=>x[0]===v))mf=v}catch(_){}
+const LVS=()=>['N1','N2','N3','N4','N5','회화'].filter(l=>D.grammar.some(e=>e.lv===l));
+let lf='all';try{const v=localStorage.getItem('odap-lf');if(v)lf=v}catch(_){}
 const memBtn=id=>{const on=ST.mem.has(id);return `<button type="button" class="memb${on?' on':''}" data-mem="${id}" aria-pressed="${on}">${on?'✓ 외움':'외웠어요'}</button>`};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const rb=s=>esc(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g,'<span class="fr" data-r="$2">$1</span>');
@@ -479,7 +481,10 @@ function draw(){
     if(rf!=='all')pool=pool.filter(e=>st(e)===rf)}
   else if(cur==='words'||cur==='grammar'){const n={todo:0,mem:0,all:pool.length};pool.forEach(e=>ST.mem.has(e.id)?n.mem++:n.todo++);rfEl.hidden=false;
     rfEl.innerHTML=MF.map(([k,l])=>`<button type="button" class="rfb" data-mf="${k}" aria-pressed="${mf===k}">${l}<b>${n[k]}</b></button>`).join('');
-    if(mf==='todo')pool=pool.filter(e=>!ST.mem.has(e.id));else if(mf==='mem')pool=pool.filter(e=>ST.mem.has(e.id))}else rfEl.hidden=true;
+    if(mf==='todo')pool=pool.filter(e=>!ST.mem.has(e.id));else if(mf==='mem')pool=pool.filter(e=>ST.mem.has(e.id));
+    if(cur==='grammar'){const cnt=l=>pool.filter(e=>l==='all'||e.lv===l).length;if(lf!=='all'&&!LVS().includes(lf))lf='all';
+      rfEl.innerHTML+='<span class="rfsep" aria-hidden="true"></span>'+[['all','모든 급수'],...LVS().map(l=>[l,l])].map(([k,l])=>`<button type="button" class="rfb" data-lf="${k}" aria-pressed="${lf===k}">${l}<b>${cnt(k)}</b></button>`).join('');
+      if(lf!=='all')pool=pool.filter(e=>e.lv===lf)}}else rfEl.hidden=true;
   /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
   const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[1]-a[1]).map(x=>x[0]);
   list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':(cur==='words'||cur==='grammar')&&mf==='todo'?'모두 외웠어요. 퀴즈 ▶로 확인해 보세요.':(cur==='words'||cur==='grammar')&&mf==='mem'?'아직 외운 것이 없어요.':'아직 비어 있어요.'}</p>`;
@@ -494,6 +499,7 @@ document.addEventListener('click',e=>{
   if(qzClick(e))return;
   const mb=e.target.closest('[data-mem]');if(mb){memToggle(mb.dataset.mem);return}
   const mfb=e.target.closest('[data-mf]');if(mfb){mf=mfb.dataset.mf;try{localStorage.setItem('odap-mf',mf)}catch(_){}draw();return}
+  const lfb=e.target.closest('[data-lf]');if(lfb){lf=lfb.dataset.lf;try{localStorage.setItem('odap-lf',lf)}catch(_){}draw();return}
   const f=e.target.closest('[data-rf]');if(f){rf=f.dataset.rf;try{localStorage.setItem('odap-rf',rf)}catch(_){}draw();return}
   if(e.target.closest('[data-close]')){closeSheet();return}
   if(e.target.closest('#sh-back')){shStack.pop();shShow();return}
@@ -538,7 +544,7 @@ function openSheet(id){if(byId[id])shOpen(id)}
 function openKanji(w,r){if([...String(w)].some(c=>KJ[c]))shOpen({w:String(w),r:r||''})}
 function closeSheet(){if(sh.hidden)return;sh.hidden=true;document.documentElement.classList.remove('sh-open');stopSay();shStack=[];try{if(shRet&&shRet.isConnected)shRet.focus({preventScroll:true})}catch(_){}}
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!sh.hidden)closeSheet();else if(!qzEl.hidden)qzClose()});
-function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';qzClose();
+function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';qzClose();
   if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}go(v);
   requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400)}})}
 window.addEventListener('popstate',()=>go(location.hash.slice(1)));
@@ -548,8 +554,8 @@ function memToggle(id){const was=ST.mem.has(id);was?ST.mem.delete(id):ST.mem.add
   if(!was&&mf==='todo'&&byId[id]&&byId[id][0]!=='mistakes')toast('외운 것으로 옮겼어요.',5000,{label:'되돌리기',fn:()=>{ST.mem.delete(id);if(!stLive)stOps.push(['m',id,false]);stSave();draw();if(!sh.hidden)shShow();qzSync()}})}
 
 /* ── 퀴즈: 못 외운 단어·문법으로 JLPT 모양 문제 만들기 ── */
-const QZ={kind:'mix',n:10,pool:'todo',qs:[],i:0,ok:0,wrong:[],done:false};
-try{const o=JSON.parse(localStorage.getItem('odap-qz')||'{}');['kind','n','pool'].forEach(k=>{if(o[k]!==undefined)QZ[k]=o[k]})}catch(_){}
+const QZ={kind:'mix',n:10,pool:'todo',lv:'all',qs:[],i:0,ok:0,wrong:[],done:false};
+try{const o=JSON.parse(localStorage.getItem('odap-qz')||'{}');['kind','n','pool','lv'].forEach(k=>{if(o[k]!==undefined)QZ[k]=o[k]})}catch(_){}
 const qzEl=document.getElementById('qz'),qzBody=document.getElementById('qz-body'),qzP=document.getElementById('qz-p'),qzBar=document.getElementById('qz-bar');
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const rdOf=s=>String(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g,'$2');
@@ -606,24 +612,27 @@ function gFind(e){if(GM.has(e.id))return GM.get(e.id);let res=null;const alts=gA
     }}
   if(res)res.text=base(e.ex[res.xi][0]).slice(res.s,res.e);GM.set(e.id,res);return res}
 function qGram(e){const g=gFind(e);let type=g&&g.ok&&Math.random()<0.75?'gblank':'mean';const q={id:e.id,kind:'g',type,ex:g?e.ex[g.xi]:(e.ex&&e.ex[0])||null};
-  if(type==='gblank'){const others=D.grammar.filter(o=>o.id!==e.id).map(o=>gFind(o)).filter(o=>o&&o.ok).map(o=>o.text);
-    const near=shuf(others).sort((a,b)=>Math.abs(a.length-g.text.length)-Math.abs(b.length-g.text.length));
-    const ds=pick3([...shuf(near.slice(0,10)),...shuf(others)],[g.text],x=>x);
+  if(type==='gblank'){const oth=D.grammar.filter(o=>o.id!==e.id).map(o=>[o,gFind(o)]).filter(x=>x[1]&&x[1].ok);
+    const byLen=a=>shuf(a).sort((x,y)=>Math.abs(x.length-g.text.length)-Math.abs(y.length-g.text.length));
+    const same=byLen(oth.filter(x=>x[0].lv===e.lv).map(x=>x[1].text)),others=oth.map(x=>x[1].text),near=byLen(others);
+    const ds=pick3([...shuf(same.slice(0,8)),...shuf(near.slice(0,10)),...shuf(others)],[g.text],x=>x);
     Object.assign(q,{label:'문법 · 빈칸',inst:INST.gblank,instJa:true,optJa:true,stem:blankHTML(e.ex[g.xi][0],g.s,g.e,'（　　）')});return mkQ(q,esc(g.text),ds.map(esc))}
   const mine=shortM(e.m);const ds=pick3(shuf(D.grammar.filter(o=>o.id!==e.id).map(o=>shortM(o.m))),[mine],x=>x);
   Object.assign(q,{label:'문법 · 뜻',inst:INST.mean,instJa:false,optJa:false,stem:`<span class="qw">${rb(e.p)}</span>`});return mkQ(q,esc(mine),ds.map(esc))}
 function qzBuild(only){const ok=e=>only?only.includes(e.id):(QZ.pool==='all'||!ST.mem.has(e.id));let items=[];
   if(only||QZ.kind!=='g')items.push(...D.words.filter(ok).map(e=>['w',e]));
-  if(only||QZ.kind!=='w')items.push(...D.grammar.filter(ok).map(e=>['g',e]));
+  if(only||QZ.kind!=='w')items.push(...D.grammar.filter(e=>ok(e)&&(only||QZ.lv==='all'||e.lv===QZ.lv)).map(e=>['g',e]));
   items=items.map(x=>[x,Math.random()+Math.min(ST.wrong[x[1].id]||0,3)*0.4]).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
   const n=only?items.length:(QZ.n||items.length),qs=[];
   for(const [t,e] of items){if(qs.length>=n)break;let q=null;try{q=t==='w'?qWord(e):qGram(e)}catch(_){q=null}if(q)qs.push(q)}return qs}
-function qzSetup(){const cnt=a=>a.filter(e=>QZ.pool==='all'||!ST.mem.has(e.id)).length;const nw=cnt(D.words),ng=cnt(D.grammar);
-  const tot=(QZ.kind!=='g'?nw:0)+(QZ.kind!=='w'?ng:0);const todoW=D.words.filter(e=>!ST.mem.has(e.id)).length,todoG=D.grammar.filter(e=>!ST.mem.has(e.id)).length;
+function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';const gOK=e=>QZ.lv==='all'||e.lv===QZ.lv;
+  const cnt=a=>a.filter(e=>QZ.pool==='all'||!ST.mem.has(e.id)).length;const nw=cnt(D.words),ng=cnt(D.grammar.filter(gOK));
+  const tot=(QZ.kind!=='g'?nw:0)+(QZ.kind!=='w'?ng:0);const todoW=D.words.filter(e=>!ST.mem.has(e.id)).length,todoG=D.grammar.filter(e=>gOK(e)&&!ST.mem.has(e.id)).length;
   const seg=(key,list)=>`<div class="seg">${list.map(([v,l])=>`<button type="button" data-qs="${key}:${v}" aria-pressed="${String(QZ[key])===String(v)}">${l}</button>`).join('')}</div>`;
   qzP.textContent='';qzBar.style.width='0';
   qzBody.innerHTML=`<p class="qz-tag">퀴즈 준비</p><h2 class="qz-h">실제 시험처럼 풀어 보기</h2>
   <h3>무엇을</h3>${seg('kind',[['mix','단어＋문법 섞어서'],['w','단어만'],['g','문법만']])}
+  ${QZ.kind!=='w'?`<h3>문법 급수</h3>${seg('lv',[['all','전체'],...LVS().map(l=>[l,l])])}`:''}
   <h3>어디서</h3>${seg('pool',[['todo',`아직 못 외운 것 (단어 ${todoW} · 문법 ${todoG})`],['all','전부']])}
   <h3>몇 문제</h3>${seg('n',[[10,'10문제'],[20,'20문제'],[0,'전부']])}
   <p class="qz-note">고른 범위 ${tot}개 · 자주 틀린 것이 먼저 나와요. 컴퓨터에서는 숫자 1~4 키로 답할 수 있어요.</p>
@@ -651,7 +660,7 @@ function qzClick(e){const t=e.target;let b;
   if(t.closest('[data-qopen]')){qzOpen();return true}
   if(qzEl.hidden)return false;
   if(t.closest('[data-qx]')){qzClose();return true}
-  if((b=t.closest('[data-qs]'))){const [k,v]=b.dataset.qs.split(':');QZ[k]=k==='n'?+v:v;try{localStorage.setItem('odap-qz',JSON.stringify({kind:QZ.kind,n:QZ.n,pool:QZ.pool}))}catch(_){}qzSetup();return true}
+  if((b=t.closest('[data-qs]'))){const [k,v]=b.dataset.qs.split(':');QZ[k]=k==='n'?+v:v;try{localStorage.setItem('odap-qz',JSON.stringify({kind:QZ.kind,n:QZ.n,pool:QZ.pool,lv:QZ.lv}))}catch(_){}qzSetup();return true}
   if(t.closest('[data-qstart]')){QZ.qs=qzBuild();QZ.i=0;QZ.ok=0;QZ.wrong=[];if(!QZ.qs.length){toast('낼 문제가 없어요.');return true}qzShow();return true}
   if((b=t.closest('[data-qa]'))){qzAnswer(+b.dataset.qa);return true}
   if(t.closest('[data-qnext]')){stopSay();QZ.i++;QZ.i<QZ.qs.length?qzShow():qzEnd();return true}
