@@ -1,8 +1,11 @@
 // Hub page (jws-lab): works offline.
 // Handles only the hub's own files; each app folder has its own sw.js (narrower scope wins there).
 // Only deletes its own caches (prefix apps-hub-), never the apps' caches.
-const C = 'apps-hub-v3';
-const CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
+const C = 'apps-hub-v4';
+// 처음 설치할 때 저장: 메인 파일 + 메인 카드에 보이는 앱 아이콘 (첫 방문 직후 오프라인이어도 카드 그림이 보이게)
+// 새 앱을 메인에 카드로 넣으면 그 앱의 './<폴더>/icons/icon-192.png'도 여기에 넣고 C 숫자를 올려요.
+const CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png',
+  './jlpt/icons/icon-192.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
