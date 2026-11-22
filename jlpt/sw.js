@@ -1,7 +1,7 @@
 // JLPT note web app: works offline.
 // The page itself is network-first (new notes show up right away when online),
 // icons and fonts are cache-first. Bump C only when this file changes.
-const C = 'jlpt-note-v3';
+const C = 'jlpt-note-v4';
 const CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
