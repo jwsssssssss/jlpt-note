@@ -1,7 +1,7 @@
-// JLPT note web app: works offline.
-// The page itself is network-first (new notes show up right away when online),
-// icons and fonts are cache-first. Bump C only when this file changes.
-const C = 'jlpt-note-v1';
+// Hub page ("나의 웹앱"): works offline.
+// Handles only the hub's own files; each app folder has its own sw.js (narrower scope wins there).
+// Only deletes its own caches (prefix apps-hub-), never the apps' caches.
+const C = 'apps-hub-v1';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -10,7 +10,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))
+    .then(ks => Promise.all(ks.filter(k => k.startsWith('apps-hub-') && k !== C).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -18,17 +18,21 @@ self.addEventListener('fetch', e => {
   const r = e.request;
   if (r.method !== 'GET') return;
   const u = new URL(r.url);
-  const same = u.origin === self.location.origin;
-  if (r.mode === 'navigate' || (same && (u.pathname.endsWith('/') || u.pathname.endsWith('/index.html')))) {
+  if (u.origin !== self.location.origin) return;
+  const base = new URL('./', self.location).pathname;
+  if (!u.pathname.startsWith(base)) return;
+  const rel = u.pathname.slice(base.length);
+  if (rel === '' || rel === 'index.html') {
     e.respondWith(fetch(r).then(res => {
       if (res.ok) { const cp = res.clone(); caches.open(C).then(c => c.put('./index.html', cp)); }
       return res;
     }).catch(() => caches.match('./index.html')));
     return;
   }
-  if (same || /(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) {
+  // hub files + each app's card icon (so the hub looks right offline)
+  if (rel === 'manifest.webmanifest' || rel.startsWith('icons/') || /^[^/]+\/icons\/icon-192\.png$/.test(rel)) {
     e.respondWith(caches.match(r).then(m => m || fetch(r).then(res => {
-      if (res.ok || res.type === 'opaque') { const cp = res.clone(); caches.open(C).then(c => c.put(r, cp)); }
+      if (res.ok) { const cp = res.clone(); caches.open(C).then(c => c.put(r, cp)); }
       return res;
     })));
   }

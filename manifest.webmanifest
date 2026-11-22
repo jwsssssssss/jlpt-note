@@ -1,7 +1,8 @@
 {
-  "name": "나의 JLPT 오답노트",
-  "short_name": "JLPT 노트",
-  "description": "단어·문법·한자와 푼 문제를 모아 두는 JLPT 복습 노트",
+  "id": "./",
+  "name": "나의 웹앱",
+  "short_name": "나의 웹앱",
+  "description": "자주 쓰는 웹앱을 모아 둔 첫 화면",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

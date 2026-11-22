@@ -1,408 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>나의 JLPT 오답노트</title>
+<title>나의 웹앱</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="JLPT 노트">
+<meta name="apple-mobile-web-app-title" content="나의 웹앱">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121317" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Kaku+Gothic+New:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-<!-- ① 디자인 (색·글꼴·레이아웃) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: 차분한 개인 공부 노트, 군더더기 없이 바로 찾고 바로 확인
-   IDEA: 일본 학생이 쓰는 단어장·문법 노트 + 빨간 도장(朱) 표시
-   PICTURE: 탭으로 나뉜 카드 목록 자체 — 큰 표제어, 가려진 후리가나
-   COLOUR and TYPE: 흰 종이 + 먹색 글씨 + 朱色 포인트, 藍色 보조 / Klee One(표제어), Zen Kaku Gothic(일본어), Noto Sans KR(한국어)
-   LAYOUT: 상단 제목 → 고정 탭·검색 → 카드 1열(넓으면 2열) */
 :root{color-scheme:light dark;
- --bg:light-dark(#ffffff,#121317);--paper:light-dark(#f6f6f4,#1b1c21);--ink:light-dark(#1b1b1f,#ececec);--sub:light-dark(#5d6168,#a3a7ae);
- --line:light-dark(#e3e3e0,#2c2e35);--red:light-dark(#c8231b,#ff6e61);--redbg:light-dark(#fdecea,#3a1c1a);--ai:light-dark(#26408b,#8ea8ff);--aibg:light-dark(#eaf0fd,#1d2440);--ok:light-dark(#1a7f37,#5fd47f);--okbg:light-dark(#e8f5ec,#16301f);--warn:light-dark(#9a5b00,#ffc266);--warnbg:light-dark(#fff4e0,#3a2a12)}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+ --bg:light-dark(#ffffff,#121317);--paper:light-dark(#f6f6f4,#1b1c21);--ink:light-dark(#1b1b1f,#ececec);
+ --sub:light-dark(#5d6168,#a3a7ae);--line:light-dark(#e3e3e0,#2c2e35);--ai:light-dark(#26408b,#8ea8ff)}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;overflow-x:clip}
-[lang=ja],.ja{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif}
-.kj{font-family:"Klee One","Yu Kyokasho","Hiragino Mincho ProN","Noto Serif JP",serif;font-weight:600}
-header{padding:28px max(5vw,16px) 14px;max-width:980px;margin:0 auto}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
-h1 .stamp{display:inline-block;color:var(--red);border:2.5px solid var(--red);border-radius:6px;font-size:.5em;padding:2px 7px;vertical-align:middle;margin-left:8px;transform:rotate(-6deg)}
-.lead{color:var(--sub);margin:0;font-size:15px}
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
-.bar-in{max-width:980px;margin:0 auto;padding:8px max(5vw,16px)}
-.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-.tab{flex:none;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:9px 16px;font:inherit;font-size:15px;cursor:pointer;min-height:44px}
-.tab b{font-size:12px;color:var(--sub);margin-left:4px;font-weight:400}
-.tab[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}.tab[aria-selected=true] b{color:var(--bg)}
-.tools{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
-.tools input[type=search]{flex:1 1 200px;font:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);min-height:44px}
-.tg{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--sub);cursor:pointer;min-height:44px;padding:0 4px;user-select:none}
-.tg input{width:18px;height:18px;accent-color:var(--red)}
-main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
-.hint{font-size:13px;color:var(--sub);margin:0 0 12px}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:14px;padding:14px 16px 16px;background:var(--bg);scroll-margin-top:140px;transition:box-shadow .4s}
-.card.flash{box-shadow:0 0 0 3px var(--red)}
-.top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.head{font-size:26px;line-height:1.9;margin:0}
-.lv{font-size:12px;color:var(--ai);background:var(--aibg);border-radius:6px;padding:1px 7px}
-.date{margin-left:auto;font-size:12px;color:var(--sub)}
-.mean{font-size:16px;margin:2px 0 6px}
-.conn{font-size:14px;color:var(--sub);margin:0 0 6px}
-.ex{list-style:none;padding:0;margin:8px 0 0}
-.ex li{border-left:3px solid var(--line);padding:2px 0 4px 10px;margin-bottom:6px}
-.ex .j{font-size:17px;line-height:2.1}
-.ex .k{font-size:14px;color:var(--sub)}
-.note{font-size:14px;background:var(--paper);border-radius:10px;padding:8px 11px;margin-top:10px}
-.rel{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:none;color:var(--ai);border-radius:999px;padding:5px 11px;cursor:pointer;min-height:36px}
-.fr{position:relative;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--sub) 60%,transparent);text-underline-offset:5px}
-.fr::after{content:attr(data-r);position:absolute;left:50%;bottom:calc(100% - .15em);transform:translateX(-50%);font-size:.5em;line-height:1;white-space:nowrap;color:var(--red);font-weight:400;visibility:hidden;pointer-events:none;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif}
-.fr.on::after,.showall .fr::after{visibility:visible}
-@media(hover:hover){.fr:hover::after{visibility:visible}}
-.hid{filter:blur(7px);cursor:pointer;transition:filter .2s;user-select:none}
-.hid.on,.showall .hid.rd,.nomask .hid.mn{filter:none;user-select:auto}
-@media(hover:hover){.hid:hover{filter:none}}
-.kcard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:center}
-.cell{position:relative;width:132px;height:132px;border:1.5px solid var(--sub);display:flex;align-items:center;justify-content:center;font-size:108px;background:var(--bg)}
-.cell::before,.cell::after{content:"";position:absolute;border:0 dashed var(--line);pointer-events:none}
-.cell::before{left:50%;top:0;bottom:0;border-left-width:1.5px}.cell::after{top:50%;left:0;right:0;border-top-width:1.5px}
-.cell span{position:relative;display:block;line-height:1;transform:translateY(var(--shift,0em))}
-.kinfo{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px;align-items:center}
-.kinfo dt{color:var(--sub);font-size:13px}.kinfo dd{margin:0}
-.words{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 12px;margin-top:10px;grid-column:1/-1}
-.words div{font-size:15px;border-bottom:1px dashed var(--line);padding:2px 0}
-.words .ja{font-size:19px;line-height:2}
-.q{font-size:17px;line-height:2.2;background:var(--paper);border-radius:10px;padding:8px 12px;margin:6px 0}
-.opts{list-style:none;padding:0;margin:6px 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:2px 14px;font-size:15px}
-.opts li{line-height:2}
-.opts .mine{color:var(--red)}.opts .mine .oj{text-decoration:line-through}
-.opts .okr{display:block;margin:1px 0 8px 1.35em;font:400 13px/1.45 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:var(--sub)}
-.opts .ans{color:var(--ok);font-weight:700}
-.res{font-size:14px}.res .x{color:var(--red);font-weight:700}.res .o{color:var(--ok);font-weight:700}
-.why{margin:6px 0 0;padding-left:18px;font-size:15px}.why li{margin-bottom:3px}
-.key{border-left:4px solid var(--red);background:var(--redbg);padding:6px 11px;margin:8px 0;border-radius:0;font-size:16px;line-height:2}
-.empty{color:var(--sub);text-align:center;padding:40px 0}
-.sp{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;margin:0 0 0 6px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--sub);cursor:pointer;vertical-align:middle;line-height:0;font:inherit;-webkit-tap-highlight-color:transparent}
-.sp svg{width:16px;height:16px;display:block}
-.sp.big{width:38px;height:38px;align-self:center}.sp.big svg{width:19px;height:19px}
-.sp.on{color:var(--red);border-color:var(--red);background:var(--redbg)}
-@media(hover:hover){.sp:hover{color:var(--ink);border-color:var(--sub)}}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:max-content;max-width:min(92vw,420px);background:var(--ink);color:var(--bg);font-size:14px;line-height:1.5;padding:10px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+main{max-width:880px;margin:0 auto;padding:36px max(5vw,16px) 48px}
+h1{font-size:clamp(28px,5vw,38px);line-height:1.15;margin:0 0 6px}
+.lead{margin:0 0 26px;color:var(--sub);font-size:15px}
+.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px;list-style:none;margin:0;padding:0}
+.app{display:flex;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:16px;color:inherit;text-decoration:none;min-height:88px;transition:border-color .15s,background .15s}
+@media(hover:hover){.app:hover{border-color:var(--sub);background:var(--paper)}}
+.app:focus-visible{outline:3px solid var(--ai);outline-offset:2px}
+.app img{width:56px;height:56px;border-radius:14px;flex:none}
+.app b{display:block;font-size:17px;line-height:1.35}
+.app span{display:block;font-size:14px;color:var(--sub);line-height:1.45;margin-top:2px}
+footer{margin-top:30px;display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;color:var(--sub);font-size:13px}
+.inst{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 14px;min-height:40px;cursor:pointer}
+.inst[hidden]{display:none}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:max-content;max-width:min(92vw,420px);background:var(--ink);color:var(--bg);font-size:14px;line-height:1.5;padding:10px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s}
 #toast.show{opacity:1}
-.rs{flex:none;font-size:12px;font-weight:700;border-radius:6px;padding:1px 8px}
-.rs.x{color:var(--red);background:var(--redbg)}.rs.g{color:var(--warn);background:var(--warnbg)}.rs.o{color:var(--ok);background:var(--okbg)}
-.src{font-size:13px;color:var(--sub)}
-.warn{font-size:12px;color:var(--warn);border:1px solid currentColor;border-radius:6px;padding:0 6px}
-.bl{display:inline-block;min-width:3em;border-bottom:1.5px solid var(--ink);margin:0 .2em;text-align:center;line-height:1.3;color:var(--ai);font-weight:700}
-.done{font-size:18px;line-height:2.3;margin:8px 0 2px}
-.ins{background:var(--redbg);color:inherit;border-radius:4px;padding:2px 3px}
-.pc+.pc{margin-left:.35em}.pc.st{color:var(--red);font-weight:700}
-.tr{font-size:14px;color:var(--sub);margin:2px 0 0}
-.ordl{display:inline-block;margin-left:10px;color:var(--sub)}
-.miss{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 0;font-size:13px;color:var(--sub)}
-.miss b,.miss .mi{font-weight:400;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:0 8px;line-height:2.2}
-.miss .mm{font:400 13px/1.3 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:var(--sub);margin-left:6px}
-.miss .mi{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;cursor:pointer;border-color:color-mix(in srgb,var(--ai) 45%,var(--line))}
-@media(hover:hover){.miss .mi:hover{background:var(--aibg)}}
-.more{margin-top:10px;border-top:1px dashed var(--line)}
-.more>summary{cursor:pointer;color:var(--ai);font-size:14px;padding:8px 0;min-height:40px}
-.card.slim .more{margin-top:2px;border-top:0}.card.slim .more>summary{font-size:16px;line-height:2.2;color:var(--ink)}
-.rf{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.rf[hidden]{display:none}
-.rfb{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer}
-.rfb[aria-pressed=true]{border-color:var(--ink);background:var(--paper);font-weight:700}
-.rfb b{font-weight:400;color:var(--sub);font-size:12px;margin-left:4px}
-.inst{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 14px;min-height:40px;cursor:pointer}.inst[hidden]{display:none}
-html.sh-open{overflow:hidden}
-.sheet{position:fixed;inset:0;z-index:30}.sheet[hidden]{display:none}
-.sh-bg{position:absolute;inset:0;background:rgb(0 0 0/.38)}
-.sh-box{position:absolute;left:0;right:0;bottom:0;max-height:80vh;max-height:80dvh;overflow:auto;overscroll-behavior:contain;background:var(--bg);border-radius:18px 18px 0 0;box-shadow:0 -6px 30px rgb(0 0 0/.25);padding:0 16px calc(18px + env(safe-area-inset-bottom))}
-.sh-top{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:8px;background:var(--bg);padding:12px 0 10px;border-bottom:1px solid var(--line);margin-bottom:10px}
-.sh-t{font-size:13px;color:var(--sub);margin-right:auto}
-.sh-top button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;min-height:38px;padding:0 12px;cursor:pointer}
-.sh-top button[hidden]{display:none}
-.sh-top .sh-go{color:var(--ai)}
-.sh-top .sh-x{width:38px;padding:0;font-size:16px}
-.sh-body .card{border:0;padding:0;border-radius:0;box-shadow:none}
-@media(min-width:760px){.sh-box{left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);width:min(600px,92vw);max-height:84vh;border-radius:16px;padding-bottom:18px}}
-footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
-@media(max-width:600px){.head{font-size:23px}.cell{width:104px;height:104px;font-size:84px}}
-@media(prefers-reduced-motion:reduce){.card,.hid{transition:none}}
+@media(prefers-reduced-motion:reduce){.app,#toast{transition:none}}
 </style>
 </head>
 <body>
-<!-- ② 화면 구조 (제목·탭·검색) -->
-<header>
-  <h1>나의 JLPT 오답노트<span class="stamp ja">復習</span></h1>
-  <p class="lead">물어본 단어·문법·한자와 푼 문제(✕ 틀림 · △ 찍어서 맞음 · ○ 풀어서 맞음)가 계속 쌓이는 노트예요.</p>
-</header>
-
-<div class="bar"><div class="bar-in">
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" data-v="words">단어<b id="c-words"></b></button>
-    <button class="tab" role="tab" data-v="grammar">문법<b id="c-grammar"></b></button>
-    <button class="tab" role="tab" data-v="kanji">한자<b id="c-kanji"></b></button>
-    <button class="tab" role="tab" data-v="mistakes">문제<b id="c-mistakes"></b></button>
-  </div>
-  <div class="tools">
-    <input id="q" type="search" placeholder="검색 (일본어·읽기·뜻)" autocomplete="off">
-    <label class="tg"><input type="checkbox" id="showall">읽기 모두 보기</label>
-    <label class="tg"><input type="checkbox" id="mask">뜻 가리기</label>
-    <label class="tg"><input type="checkbox" id="slow">천천히 읽기</label>
-    <button type="button" class="inst" id="inst" hidden>앱으로 설치</button>
-  </div>
-</div></div>
-
 <main>
-  <p class="hint">점선 밑줄이 있는 한자를 탭하거나 마우스를 올리면 읽는 법이 보여요. 흐리게 가려진 부분도 탭하면 보여요. 스피커 단추를 누르면 일본어로 읽어 줘요.</p>
-  <div class="rf" id="rf" hidden></div>
-  <div class="list" id="list"></div>
+  <h1>나의 웹앱</h1>
+  <p class="lead">자주 쓰는 웹앱을 한곳에 모아 둔 첫 화면이에요.</p>
+  <!-- 새 웹앱을 만들면: site/<폴더>/ 에 앱을 넣고, 아래에 <li> 카드 하나를 추가해요. -->
+  <ul class="apps">
+    <li><a class="app" href="jlpt/"><img src="jlpt/icons/icon-192.png" alt=""><div><b>JLPT 오답노트</b><span>단어 · 문법 · 한자와 푼 문제를 모아 두는 복습 노트</span></div></a></li>
+  </ul>
+  <footer>
+    <span>새 웹앱을 만들면 여기에 카드가 하나씩 늘어나요.</span>
+    <button type="button" class="inst" id="inst" hidden>이 화면을 앱으로 설치</button>
+  </footer>
 </main>
-<footer id="foot"></footer>
 <div id="toast" role="status" aria-live="polite"></div>
-<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sh-t">
-  <div class="sh-bg" data-close></div>
-  <div class="sh-box" id="sh-box">
-    <div class="sh-top"><button type="button" id="sh-back" hidden>← 뒤로</button><span class="sh-t" id="sh-t"></span><button type="button" class="sh-go" id="sh-go"></button><button type="button" class="sh-x" id="sh-x" data-close aria-label="닫기">✕</button></div>
-    <div class="sh-body" id="sh-body"></div>
-  </div>
-</div>
-
-<!-- ③ 데이터: 단어·문법·한자·틀린 문제가 여기에 누적돼요.
-     읽는 법은 {漢字|かんじ} 형식으로 쓰면 자동으로 숨김 처리됩니다. -->
-<script type="application/json" id="data">
-{
-"updated":"2026-11-22",
-"words":[
-{"id":"w-tsuku","w":"{付|つ}く（〜がつかない）","m":"(판단·결과가) 서다, 나다 → 부정: ~가 안 되다","ex":[["{区別|くべつ}がつかない","구별이 안 된다"],["{見当|けんとう}がつかない","짐작이 안 간다"],["{決心|けっしん}がつかない","결심이 서지 않는다"],["{勉強|べんきょう}が{手|て}につかない","공부가 손에 안 잡힌다"]],"note":"つく는 한자가 여러 개예요. 장소＋に → {着|つ}く(도착), 불·전기＋が → {点|つ}く(켜지다), 추상명사＋が → {付|つ}く(서다·나다). 「{嘘|うそ}をつく」는 거짓말하다.","rel":["w-torikaeshi","w-kecchaku"],"d":"2026-11-22"},
-{"id":"w-torikaeshi","w":"{取|と}り{返|かえ}しがつかない","m":"돌이킬 수 없다","ex":[["{取|と}り{返|かえ}しのつかないミスをしてしまった。","돌이킬 수 없는 실수를 해 버렸다."],["まだ{取|と}り{返|かえ}しがつく。","아직 되돌릴 수 있다."]],"note":"뒤의 명사를 꾸밀 때는 が → の: 取り返しのつかない＋명사","rel":["w-tsuku"],"d":"2026-11-22"},
-{"id":"w-kecchaku","w":"{決着|けっちゃく}がつく","m":"결판이 나다, 결론이 나다","ex":[["{話|はな}し{合|あ}いの{結果|けっか}、やっと{決着|けっちゃく}がついた。","의논한 끝에 겨우 결론이 났다."]],"note":"비슷한 부사: やっと(고생 끝에 겨우) / ようやく(조금 딱딱) / ついに(결국, 좋든 나쁘든)","rel":["w-tsuku"],"d":"2026-11-22"},
-{"id":"w-kamau","w":"{構|かま}う","m":"신경 쓰다, 상관하다 / 상대해 주다","ex":[["ここに{座|すわ}っても{構|かま}いませんか。","여기 앉아도 될까요?"],["どうぞお{構|かま}いなく。","신경 쓰지 마세요."],["{猫|ねこ}を{構|かま}う","고양이를 데리고 놀다"]],"note":"주로 부정형 構わない로 써요. 「{結構|けっこう}です」(괜찮습니다·사양)와 묶어서 외우기.","rel":["k-kou","g-temokamawanai","g-nikamawazu"],"d":"2026-11-22"},
-{"id":"w-mitsumori","w":"{見積|みつ}もり","m":"견적","ex":[["{見積|みつ}もりを{取|と}る","견적을 받다"],["{見積|みつ}もりを{出|だ}す","견적을 내다"],["{少|すく}なく{見積|みつ}もっても、100{万円|まんえん}はかかる。","적게 잡아도 100만 엔은 든다."]],"note":"서류는 {見積書|みつもりしょ}. {相見積|あいみつ}もり＝여러 곳 비교 견적. 「〜つもり(작정)」도 {積|つ}もる에서 온 말.","rel":["k-seki"],"d":"2026-11-22"},
-{"id":"w-ukaru","w":"{受|う}かる","m":"합격하다","ex":[["{試験|しけん}に{受|う}かった。","시험에 합격했다."]],"rel":["k-ju","g-taratade"],"d":"2026-11-22"},
-{"id":"w-ushinau","w":"{失|うしな}う","m":"잃다","ex":[["{自信|じしん}を{失|うしな}う","자신감을 잃다"]],"rel":["k-shitsu","g-saseteshimau"],"d":"2026-11-22"},
-{"id":"w-iwau","w":"{祝|いわ}う","m":"축하하다","ex":[["{誕生日|たんじょうび}を{祝|いわ}う","생일을 축하하다"],["{合格|ごうかく}{祝|いわ}い","합격 축하(선물)"],["それを{祝|いわ}うように、{今日|きょう}は{晴|は}れた。","그걸 축하하듯 오늘은 맑았다."]],"rel":["k-shuku"],"d":"2026-11-22"},
-{"id":"w-tsumoru","w":"{積|つ}もる","m":"쌓이다","ex":[["{昨夜|さくや}、{雪|ゆき}が{積|つ}もった。","어젯밤 눈이 쌓였다."]],"rel":["k-seki"],"d":"2026-11-22"},
-{"id":"w-dainashi","w":"{台無|だいな}し","m":"엉망이 됨, 망침","ex":[["せっかくの{休|やす}みが{台無|だいな}しになった。","모처럼의 휴일이 엉망이 됐다."]],"rel":["m-q7","g-kanenai"],"d":"2026-11-22"},
-{"id":"w-nagabiku","w":"{長引|ながび}く","m":"오래 끌다, 길어지다","ex":[["{風邪|かぜ}が{長引|ながび}いている。","감기가 오래가고 있다."]],"rel":["m-q7"],"d":"2026-11-22"},
-{"id":"w-aichaku","w":"{愛着|あいちゃく}","m":"애착","ex":[["この{町|まち}に{愛着|あいちゃく}がある。","이 동네에 애착이 있다."]],"rel":["m-q6"],"d":"2026-11-22"},
-{"id":"w-youkyuu","w":"{要求|ようきゅう}","m":"요구","ex":[["{要求|ようきゅう}に{応|こた}える","요구에 응하다"]],"rel":["m-q6"],"d":"2026-11-22"},
-{"id":"w-taishou","w":"{対象|たいしょう}","m":"대상","ex":[["{学生|がくせい}を{対象|たいしょう}にした{調査|ちょうさ}","학생을 대상으로 한 조사"]],"rel":["m-q6"],"d":"2026-11-22"},
-{"id":"w-kanarazushimo","w":"{必|かなら}ずしも","m":"(부정과 함께) 반드시 ~인 것은 아니다","ex":[["{高|たか}い{物|もの}が{必|かなら}ずしもいい{物|もの}だとは{限|かぎ}らない。","비싼 것이 반드시 좋은 것은 아니다."]],"rel":["g-kanarazushimo","m-q6"],"d":"2026-11-22"},
-{"id":"w-sekkaku","w":"せっかく","m":"모처럼, 애써","ex":[["せっかくの{休|やす}み","모처럼의 휴일"],["せっかく{来|き}たのに、{閉|し}まっていた。","애써 왔는데 닫혀 있었다."]],"rel":["m-q7"],"d":"2026-11-22"},
-{"id":"w-saishuubi","w":"{最終日|さいしゅうび}","m":"마지막 날, 최종일","ex":[["{最終日|さいしゅうび}の{今日|きょう}こそ{何|なに}も{起|お}こりませんように。","마지막 날인 오늘만큼은 아무 일도 일어나지 않기를."],["{展示会|てんじかい}の{最終日|さいしゅうび}","전시회 마지막 날"]],"note":"「{最終日|さいしゅうび}の{今日|きょう}」의 の는 '~인'(같은 것을 가리킴) → 마지막 날인 오늘. 반대말은 {初日|しょにち}(첫날).","rel":["m-q11","g-masuyouni","g-koso"],"d":"2026-11-22"},
-{"id":"w-omawarisan","w":"お{巡|まわ}りさん","m":"순경 아저씨, 경찰관 (친근하게 부르는 말)","ex":[["お{巡|まわ}りさんに{道|みち}を{聞|き}いた。","경찰관에게 길을 물었다."]],"note":"정식 명칭은 {警察官|けいさつかん}. {交番|こうばん}(파출소) 경찰관을 친근하게 부르는 말로, {巡|めぐ}る(돌다)에서 온 '순찰 도는 사람'.","rel":["m-q13","g-desae","k-jun"],"d":"2026-11-22"},
-{"id":"w-mizushirazu","w":"{見|み}ず{知|し}らず","m":"전혀 모르는 사이, 생판 남","ex":[["{見|み}ず{知|し}らずの{人|ひと}に{声|こえ}をかけられた。","생판 모르는 사람이 말을 걸어왔다."]],"note":"거의 「{見|み}ず{知|し}らずの＋사람」으로 써요. ず는 ない의 옛말 → '본 적도 알지도 못하는'.","rel":["m-q13"],"d":"2026-11-22"},
-{"id":"w-ikisaki","w":"{行|い}き{先|さき}","m":"행선지, 가는 곳","ex":[["{行|い}き{先|さき}を{言|い}わずに{出|で}かけた。","행선지를 말하지 않고 나갔다."]],"note":"ゆきさき라고도 읽어요. 버스·전철의 '○○행' 표시도 行き先.","rel":["m-q13","w-tazuneru"],"d":"2026-11-22"},
-{"id":"w-tazuneru","w":"{尋|たず}ねる","m":"묻다 / (행방을) 찾다","ex":[["{行|い}き{先|さき}を{尋|たず}ねる","행선지를 묻다"],["{駅|えき}までの{道|みち}を{尋|たず}ねた。","역까지 가는 길을 물었다."]],"note":"같은 たずねる라도 {訪|たず}ねる는 '방문하다'. 묻다·찾다＝尋ねる / 찾아가다＝訪ねる.","rel":["m-q13","w-ikisaki"],"d":"2026-11-22"},
-{"id":"w-yohodo","w":"よほど（よっぽど）","m":"상당히, 어지간히 / よほどの＋명사: 웬만한, 어지간한","ex":[["よほどのことがない{限|かぎ}り、{遅刻|ちこく}はしない。","어지간한 일이 없는 한 지각은 안 한다."],["よほど{疲|つか}れていたのか、すぐに{寝|ね}てしまった。","어지간히 피곤했는지 바로 잠들어 버렸다."]],"note":"「よほどのことがない{限|かぎ}り」(어지간한 일이 없는 한)는 통째로 외우기. 회화에서는 よっぽど.","rel":["m-q13"],"d":"2026-11-22"},
-{"id":"w-miorosu","w":"{見下|みお}ろす","m":"내려다보다","ex":[["{高|たか}い{所|ところ}から{見下|みお}ろすパリの{景色|けしき}","높은 곳에서 내려다보는 파리의 경치"],["{山|やま}の{上|うえ}から{町|まち}を{見下|みお}ろす。","산 위에서 마을을 내려다본다."]],"note":"반대말은 {見上|みあ}げる(올려다보다). 모양이 비슷한 {見下|みくだ}す는 '깔보다, 얕보다'라서 주의.","rel":["m-q14"],"d":"2026-11-22"},
-{"id":"w-kazukazu","w":"{数々|かずかず}","m":"수많은, 여러 가지","ex":[["{数々|かずかず}の{映画|えいが}の{舞台|ぶたい}","수많은 영화의 무대"],["{数々|かずかず}の{賞|しょう}を{受|う}けた。","수많은 상을 받았다."]],"note":"주로 「{数々|かずかず}の＋명사」로 써요. 々는 앞 한자를 되풀이하는 기호 ({人々|ひとびと}・{時々|ときどき}).","rel":["m-q14"],"d":"2026-11-22"},
-{"id":"w-kotowaza","w":"ことわざ","m":"속담","ex":[["「{乗|の}り{掛|か}かった{船|ふね}」ということわざ","'올라탄 배'라는 속담"]],"note":"한자로는 {諺|ことわざ}지만 보통 히라가나로 써요. 「〜ということわざ」(~라는 속담) 꼴로 자주 나와요.","rel":["m-q15"],"d":"2026-11-22"},
-{"id":"w-kishi","w":"{岸|きし}","m":"물가, 기슭","ex":[["{船|ふね}が{岸|きし}を{離|はな}れる","배가 물가를 떠나다"],["{川|かわ}の{向|む}こう{岸|ぎし}","강 건너편 기슭"]],"note":"「{向|む}こう{岸|ぎし}」처럼 뒤에 붙으면 ぎし로 소리가 탁해져요. {海岸|かいがん}(해안)은 음독 がん.","rel":["m-q15","w-hanareru"],"d":"2026-11-22"},
-{"id":"w-hanareru","w":"{離|はな}れる","m":"떨어지다, 떠나다","ex":[["{岸|きし}を{離|はな}れた{船|ふね}","물가를 떠난 배"],["{親|おや}から{離|はな}れて{暮|く}らす。","부모와 떨어져 산다."]],"note":"「Nを{離|はな}れる」(N을 떠나다)와 「Nから{離|はな}れる」(N에서 떨어지다) 둘 다 써요. 타동사는 {離|はな}す(떼다).","rel":["m-q15","w-kishi"],"d":"2026-11-22"},
-{"id":"w-gesen","w":"{下船|げせん}","m":"하선, 배에서 내림","ex":[["{船|ふね}から{下船|げせん}する","배에서 내리다"]],"note":"반대말은 {乗船|じょうせん}(승선). 비행기는 {搭乗|とうじょう}(탑승).","rel":["m-q15"],"d":"2026-11-22"},
-{"id":"w-ishanikakaru","w":"{医者|いしゃ}にかかる","m":"의사에게 진찰받다, 병원에 다니다","ex":[["{多|おお}くの{医者|いしゃ}にかかったのだが、{何|なん}のかいもない。","여러 의사에게 진찰받았지만 아무 보람이 없다."],["{早|はや}めに{医者|いしゃ}にかかったほうがいい。","일찍 병원에 가 보는 게 좋다."]],"note":"이 かかる는 '(의사의) 진찰을 받다'라는 뜻이라 늘 「{医者|いしゃ}に」와 같이 써요. 뒤의 「〜のだが」는 '~했는데, ~했지만'.","rel":["m-q2"],"d":"2026-11-22"},
-{"id":"w-masumasu","w":"ますます","m":"점점, 더욱더","ex":[["ますます{悪|わる}くなる{一方|いっぽう}だ。","점점 나빠지기만 한다."],["{雨|あめ}がますます{強|つよ}くなってきた。","비가 점점 더 세졌다."]],"note":"한자로는 {益々|ますます}. 비슷한 말: だんだん(차츰), どんどん(쭉쭉, 빠르게). 「〜{一方|いっぽう}だ」와 자주 같이 나와요.","rel":["m-q2"],"d":"2026-11-22"},
-{"id":"w-reibou","w":"{冷房|れいぼう}","m":"냉방, 에어컨","ex":[["{冷房|れいぼう}はほとんど{使|つか}わずにすんだ。","냉방은 거의 쓰지 않고 지나갔다."],["{冷房|れいぼう}が{効|き}きすぎて{寒|さむ}い。","냉방이 너무 세서 춥다."]],"note":"반대말은 {暖房|だんぼう}(난방). 일상에서는 クーラー・エアコン이라고도 해요.","rel":["m-q3"],"d":"2026-11-22"},
-{"id":"w-hatsushukkinbi","w":"{初出勤日|はつしゅっきんび}","m":"첫 출근 날","ex":[["{明日|あした}の{初出勤日|はつしゅっきんび}のことを{思|おも}うと{緊張|きんちょう}する。","내일 첫 출근 날을 생각하면 긴장된다."]],"note":"{初|はつ}＋{出勤|しゅっきん}(출근)＋{日|び}. '처음 ~'의 初는 はつ로 읽어요 ({初出場|はつしゅつじょう}・{初登校|はつとうこう}). 단, {初日|しょにち}(첫날)는 しょ.","rel":["m-q4"],"d":"2026-11-22"},
-{"id":"w-minohikishimaru","w":"{身|み}の{引|ひ}き{締|し}まる{思|おも}い","m":"마음이 다잡아지는(긴장되는) 느낌","ex":[["{身|み}の{引|ひ}き{締|し}まる{思|おも}いがします。","마음이 다잡아지는 기분이 듭니다."],["{身|み}が{引|ひ}き{締|し}まる","(긴장으로) 정신이 번쩍 들다"]],"note":"{引|ひ}き{締|し}まる 혼자는 '팽팽해지다, 탄탄해지다'({体|からだ}が{引|ひ}き{締|し}まる). 「{身|み}が／の{引|ひ}き{締|し}まる」는 '정신이 번쩍 들고 각오가 생기다'. 시험에는 「身の引き締まる思いがする」 덩어리로 나와요.","rel":["m-q4","g-omoigasuru"],"d":"2026-11-22"},
-{"id":"w-mikomi","w":"{見込|みこ}み","m":"전망, 가망, 예상","ex":[["{来月|らいげつ}{完成|かんせい}する{見込|みこ}みだ。","다음 달 완성될 전망이다."],["{合格|ごうかく}の{見込|みこ}みがない。","합격할 가망이 없다."]],"note":"「{見込|みこ}みがある／ない」「〜{見込|みこ}みだ」로 써요. 「見込みがします」라고는 하지 않아요.","rel":["m-q4"],"d":"2026-11-22"},
-{"id":"w-shigotoburi","w":"{仕事|しごと}ぶり","m":"일하는 모습(태도), 일솜씨","ex":[["{彼|かれ}の{仕事|しごと}ぶりは{上司|じょうし}にも{高|たか}く{評価|ひょうか}されている。","그의 일하는 모습은 상사에게도 높이 평가받고 있다."],["{新人|しんじん}とは{思|おも}えない{仕事|しごと}ぶりだ。","신입이라고는 생각할 수 없는 일솜씨다."]],"note":"{仕事|しごと}＋ぶり(~하는 모습). 평가하는 말과 자주 같이 써요 (仕事ぶりが{真面目|まじめ}だ・仕事ぶりを{評価|ひょうか}する). 비슷한 말: {働|はたら}きぶり.","rel":["g-buri"],"d":"2026-11-22"},
-{"id":"w-bakabakashii","w":"ばかばかしい","m":"어처구니없다, 터무니없다, 바보 같다","ex":[["そんなばかばかしい{話|はなし}は{信|しん}じられない。","그런 어처구니없는 얘기는 못 믿겠다."],["ばかばかしいといったらありゃしない。","어처구니없기 짝이 없다."]],"note":"한자로는 {馬鹿馬鹿|ばかばか}しい. {馬鹿|ばか}(바보)를 겹친 말이에요. 비슷한 말: くだらない(시시하다), あほらしい(어이없다, 간사이에서 많이 씀).","rel":["g-toittaraarya"],"d":"2026-11-22"},
-{"id":"w-kyuuyou","w":"{急用|きゅうよう}","m":"급한 볼일, 급한 용무","ex":[["{急用|きゅうよう}ができたとかで、ただいま{帰|かえ}りました。","급한 볼일이 생겼다면서 방금 돌아갔습니다."],["{急用|きゅうよう}で{会議|かいぎ}に{出|で}られなくなった。","급한 일로 회의에 못 나가게 됐다."]],"note":"{急|きゅう}(급한)＋{用|よう}(볼일). 「{急|きゅう}な{用事|ようじ}」와 같은 뜻. 「急用ができる」(급한 일이 생기다)로 자주 써요.","rel":["g-tokade","w-tadaima"],"d":"2026-11-22"},
-{"id":"w-tadaima","w":"ただいま","m":"방금 / 지금 곧 / (인사) 다녀왔습니다","ex":[["{急用|きゅうよう}ができたとかで、ただいま{帰|かえ}りました。","급한 볼일이 생겼다면서 방금 돌아갔습니다. (남 이야기)"],["ただいま{参|まい}ります。","지금 곧 가겠습니다."],["ただいま！","다녀왔어!"]],"note":"한자로는 {只今|ただいま}. 공손한 말에서는 たった{今|いま}(방금)·{今|いま}すぐ(곧)의 뜻이에요. 「ただいま{帰|かえ}りました」를 무조건 '다녀왔습니다'로 읽으면 함정 — 앞에 남의 이유(〜とかで)가 있으면 '방금 돌아갔습니다'.","rel":["g-tokade","w-kyuuyou"],"d":"2026-11-22"},
-{"id":"w-kozutsumi","w":"{小包|こづつみ}","m":"소포","ex":[["ちょうど{出|で}かけようとしていたところへ、{国|くに}の{母|はは}から{小包|こづつみ}が{届|とど}いた。","마침 외출하려던 참에, 고향의 어머니에게서 소포가 도착했다."],["{郵便局|ゆうびんきょく}で{小包|こづつみ}を{送|おく}る。","우체국에서 소포를 보낸다."]],"note":"{小|こ}＋{包|つつみ}(꾸러미) → こづつみ (つ가 づ로 탁해져요). 「{国|くに}の{母|はは}」의 {国|くに}는 '나라'보다 '고향·본국'이라는 뜻이에요.","rel":["g-tokoroe"],"d":"2026-11-22"}
-],
-"grammar":[
-{"id":"g-taratade","p":"〜たら〜たで","lv":"N2","m":"~하면 ~한 대로 (바라던 일이 돼도 또 다른 일이 생김)","c":"동사 た형＋ら ＋ 같은 동사 た형＋で","ex":[["{受|う}かったら{受|う}かったで、{今度|こんど}は{学費|がくひ}が{心配|しんぱい}だ。","합격하면 합격한 대로, 이번엔 학비가 걱정이다."]],"note":"て가 아니라 で! (だ의 て형)","rel":["g-badeba","g-naranade","g-sorehasorede","g-bahodo","g-temotemo"],"d":"2026-11-22"},
-{"id":"g-badeba","p":"〜ば〜で","lv":"N2","m":"~하면 ~한 대로","c":"가정형 ば ＋ 같은 말 た형/ない형＋で","ex":[["お{金|かね}はあればあったで{使|つか}ってしまうし、なければないで{何|なん}とかなる。","돈은 있으면 있는 대로 써 버리고, 없으면 없는 대로 어떻게든 된다."]],"note":"「あればあったで」는 통째로 외우기","rel":["g-taratade"],"d":"2026-11-22"},
-{"id":"g-naranade","p":"〜なら〜で","lv":"N2","m":"~라면 ~인 대로 (상황을 받아들임)","c":"명사・な형용사＋なら ＋ 같은 말＋で","ex":[["{雨|あめ}なら{雨|あめ}で、{家|いえ}で{映画|えいが}でも{見|み}よう。","비가 오면 비가 오는 대로 집에서 영화라도 보자."]],"rel":["g-taratade"],"d":"2026-11-22"},
-{"id":"g-sorehasorede","p":"それはそれで","lv":"회화","m":"그건 그것대로","ex":[["{失敗|しっぱい}したけど、それはそれでいい{経験|けいけん}になった。","실패했지만 그건 그것대로 좋은 경험이 됐다."]],"rel":["g-taratade"],"d":"2026-11-22"},
-{"id":"g-bahodo","p":"〜ば〜ほど","lv":"N3","m":"~할수록","c":"가정형 ば ＋ 같은 동사 사전형＋ほど","ex":[["{練習|れんしゅう}すればするほど{上手|じょうず}になる。","연습하면 할수록 실력이 는다."]],"note":"반복 구조는 같지만 뜻이 달라요 (たら〜たで와 구별)","rel":["g-taratade"],"d":"2026-11-22"},
-{"id":"g-temotemo","p":"〜ても〜ても","lv":"N3","m":"아무리 ~해도","ex":[["{待|ま}っても{待|ま}っても、{彼|かれ}は{来|こ}なかった。","기다리고 또 기다려도 그는 오지 않았다."]],"rel":["g-taratade","g-machinimatta"],"d":"2026-11-22"},
-{"id":"g-machinimatta","p":"ます{形|けい}＋に＋た{形|けい}（{待|ま}ちに{待|ま}った）","lv":"N2","m":"~하고 ~하던 (강조)","ex":[["{待|ま}ちに{待|ま}ったゴールデンウィークがやってきた。","기다리고 기다리던 골든위크가 왔다."],["{考|かんが}えに{考|かんが}えた{結果|けっか}、{留学|りゅうがく}を{決|き}めた。","고민하고 고민한 끝에 유학을 결정했다."]],"rel":["m-q7","g-temotemo"],"d":"2026-11-22"},
-{"id":"g-saseteshimau","p":"〜（さ）せてしまう","lv":"N3","m":"(남을) ~하게 만들어 버리다 (유감)","c":"사역형 て형＋しまう","ex":[["{私|わたし}の{一言|ひとこと}が、{彼|かれ}の{自信|じしん}を{失|うしな}わせてしまった。","내 한마디가 그의 자신감을 잃게 만들어 버렸다."],["{心配|しんぱい}させてしまって、すみません。","걱정 끼쳐서 죄송합니다."]],"note":"사역형 만들기: 1그룹 う단→あ단＋せる (う로 끝나면 わ: 失う→失わせる) / 2그룹 る→させる / する→させる / {来|く}る→{来|こ}させる","rel":["g-saseteitadaku","g-saserareru","g-chau","w-ushinau"],"d":"2026-11-22"},
-{"id":"g-saseteitadaku","p":"〜（さ）せていただく","lv":"N3","m":"~하겠습니다 (사역＋겸양)","ex":[["{今日|きょう}は{早|はや}めに{帰|かえ}らせていただきます。","오늘은 일찍 들어가 보겠습니다."]],"rel":["g-saseteshimau"],"d":"2026-11-22"},
-{"id":"g-saserareru","p":"〜（さ）せられる","lv":"N3","m":"억지로 ~하게 되다 (사역수동)","ex":[["{上司|じょうし}に{残業|ざんぎょう}させられた。","상사 때문에 억지로 야근했다."]],"rel":["g-saseteshimau"],"d":"2026-11-22"},
-{"id":"g-chau","p":"〜ちゃう／〜じゃう","lv":"회화","m":"~해 버리다 (てしまう 축약)","ex":[["{心配|しんぱい}させちゃった。","걱정시켜 버렸다."]],"note":"청해에 자주 나와요","rel":["g-saseteshimau"],"d":"2026-11-22"},
-{"id":"g-tsutsuaru","p":"〜つつある","lv":"N2","m":"점점 ~해 가고 있다","ex":[["{伝統|でんとう}が{失|うしな}われつつある。","전통이 사라져 가고 있다."]],"rel":["g-saseteshimau"],"d":"2026-11-22"},
-{"id":"g-temokamawanai","p":"〜ても{構|かま}わない","lv":"N4","m":"~해도 괜찮다","ex":[["ここに{座|すわ}っても{構|かま}いませんか。","여기 앉아도 될까요?"]],"rel":["w-kamau"],"d":"2026-11-22"},
-{"id":"g-nikamawazu","p":"〜にかまわず／〜もお{構|かま}いなしに","lv":"N2","m":"~에 개의치 않고 / 아랑곳하지 않고","ex":[["{雨|あめ}にもかまわず{出|で}かけた。","비가 오는데도 개의치 않고 나갔다."],["{人|ひと}の{迷惑|めいわく}もお{構|かま}いなしに{騒|さわ}ぐ。","남에게 폐가 되는 것도 아랑곳하지 않고 떠든다."]],"rel":["w-kamau"],"d":"2026-11-22"},
-{"id":"g-katoiuto","p":"〜かというと、（{必|かなら}ずしも）そうではない","lv":"N2","m":"~인가 하면, (꼭) 그렇지는 않다","ex":[["{赤|あか}ちゃんの{愛着|あいちゃく}の{対象|たいしょう}は{母親|ははおや}でなくてはならないかというと、{必|かなら}ずしもそうではない。","아기의 애착 대상이 꼭 엄마여야 하느냐 하면, 반드시 그렇지는 않다."]],"note":"흔한 생각을 질문으로 던진 뒤 부정. 「そう」가 앞 내용 자체를 가리키면 かというと.","rel":["g-karatoitte","g-kanarazushimo","m-q6"],"d":"2026-11-22"},
-{"id":"g-karatoitte","p":"〜からといって〜とは{限|かぎ}らない","lv":"N2","m":"~라고 해서 ~라고는 할 수 없다","ex":[["{高|たか}いからといって、おいしいとは{限|かぎ}らない。","비싸다고 해서 맛있다고는 할 수 없다."]],"note":"A(사실)에서 예상되는 다른 결론 B를 부정 — かというと와 헷갈리기 쉬운 함정","rel":["g-katoiuto"],"d":"2026-11-22"},
-{"id":"g-kanarazushimo","p":"{必|かなら}ずしも〜わけではない","lv":"N2","m":"반드시 ~인 것은 아니다","ex":[["{日本人|にほんじん}が{必|かなら}ずしも{敬語|けいご}が{上手|じょうず}なわけではない。","일본인이 반드시 경어를 잘하는 것은 아니다."]],"rel":["g-katoiuto","w-kanarazushimo"],"d":"2026-11-22"},
-{"id":"g-wakenihaikanai","p":"〜わけにはいかない","lv":"N3","m":"(사정상) ~할 수는 없다","ex":[["{明日|あした}は{試験|しけん}だから、{休|やす}むわけにはいかない。","내일은 시험이라 쉴 수는 없다."]],"rel":["m-q6"],"d":"2026-11-22"},
-{"id":"g-nakutehanaranai","p":"〜なくてはならない","lv":"N4","m":"~해야 한다 (회화: 〜なきゃ)","c":"동사 ない형 / 명사＋でなくてはならない","ex":[["{明日|あした}までに{出|だ}さなくてはならない。","내일까지 내야 한다."]],"rel":["m-q6"],"d":"2026-11-22"},
-{"id":"g-kanenai","p":"〜かねない","lv":"N2","m":"~할 수도 있다 (나쁜 결과 우려)","c":"동사 ます형＋かねない","ex":[["このままではせっかくのゴールデンウィークが{台無|だいな}しになりかねない。","이대로라면 모처럼의 골든위크를 망칠 수도 있다."]],"note":"「このままでは」가 보이면 아직 안 일어난 나쁜 결과가 온다는 신호","rel":["g-osoregaaru","g-kaneru","m-q7"],"d":"2026-11-22"},
-{"id":"g-osoregaaru","p":"〜おそれがある","lv":"N2","m":"~할 우려가 있다 (뉴스·공문)","ex":[["{台風|たいふう}が{上陸|じょうりく}するおそれがある。","태풍이 상륙할 우려가 있다."]],"rel":["g-kanenai"],"d":"2026-11-22"},
-{"id":"g-kaneru","p":"〜かねる","lv":"N2","m":"~하기 어렵다 (かねない와 정반대!)","ex":[["その{質問|しつもん}にはお{答|こた}えしかねます。","그 질문에는 답변드리기 어렵습니다."]],"rel":["g-kanenai"],"d":"2026-11-22"},
-{"id":"g-toieba","p":"Nはといえば","lv":"N2","m":"N은 어떤가 하면 (대비)","ex":[["{兄|あに}は{優秀|ゆうしゅう}だ。{私|わたし}はといえば…。","형은 우수하다. 나는 어떤가 하면…."]],"rel":["m-q7"],"d":"2026-11-22"},
-{"id":"g-masuyouni","p":"〜ますように","lv":"N3","m":"~하기를, ~하게 해 주세요 (기원·바람)","c":"동사 ます형 / ません＋ように (문장 끝)","ex":[["{最終日|さいしゅうび}の{今日|きょう}こそ{何|なに}も{起|お}こりませんように。","마지막 날인 오늘만큼은 아무 일도 일어나지 않기를."],["{合格|ごうかく}できますように。","합격할 수 있기를."]],"note":"문장 맨 끝에 와요. 「Nのように」(N처럼)로 읽으면 함정: {最終日|さいしゅうび}のように ✕ / {起|お}こりませんように ○","rel":["g-koso","w-saishuubi","m-q11"],"d":"2026-11-22"},
-{"id":"g-koso","p":"Nこそ","lv":"N3","m":"N이야말로, N만큼은 (강조)","ex":[["{今日|きょう}こそ{早|はや}く{寝|ね}よう。","오늘만큼은 일찍 자자."],["こちらこそ、よろしくお{願|ねが}いします。","저야말로 잘 부탁드립니다."]],"note":"「{今度|こんど}こそ」「{今年|ことし}こそ」처럼 '이번만큼은 꼭'의 느낌.","rel":["g-masuyouni","m-q11"],"d":"2026-11-22"},
-{"id":"g-uru","p":"ます{形|けい}＋{得|う}る／{得|え}ない","lv":"N2","m":"~할 수 있다 / ~할 수 없다 (그럴 가능성)","c":"동사 ます형＋得る(うる・える) / 得ない(えない)","ex":[["{一|ひと}つの{目的|もくてき}に{対|たい}して{複数|ふくすう}の{目標|もくひょう}は{存在|そんざい}し{得|う}る。","하나의 목적에 대해 여러 목표는 존재할 수 있다."],["そんなことはあり{得|え}ない。","그런 일은 있을 수 없다."],["{考|かんが}え{得|う}る{方法|ほうほう}はすべて{試|ため}した。","생각할 수 있는 방법은 다 해 봤다."]],"note":"긍정은 うる・える 둘 다, 부정은 えない만 (うない ✕). 「ありえない！」(말도 안 돼!)가 바로 이것. 능력(できる)이 아니라 '그럴 가능성'을 말해요.","rel":["k-toku","m-q12"],"d":"2026-11-22"},
-{"id":"g-desae","p":"〜でさえ（も）／〜さえ","lv":"N2","m":"N조차, N마저","c":"명사＋さえ / 명사＋でさえ(も)","ex":[["お{巡|まわ}りさんでさえも、よほどのことがない{限|かぎ}り、{見|み}ず{知|し}らずの{人|ひと}に{行|い}き{先|さき}を{尋|たず}ねたりはしないものだ。","경찰관조차도 어지간한 일이 없는 한, 생판 모르는 사람에게 행선지를 묻거나 하지는 않는 법이다."],["{専門家|せんもんか}でさえ{分|わ}からない。","전문가조차 모른다."]],"note":"「Nで」 바로 뒤가 빈칸이면 さえ(も)를 먼저 의심 → でさえ. 「〜さえ〜ば」(~만 ~하면)와는 뜻이 달라요.","rel":["w-omawarisan","m-q13"],"d":"2026-11-22"},
-{"id":"g-karashite","p":"Nからして","lv":"N2","m":"N부터가 (대표적인 것을 들어 '다른 것도 마찬가지')","c":"명사＋からして","ex":[["リーダーからしてやる{気|き}がないのだから、ほかの{人|ひと}たちがやるはずがない。","리더부터가 의욕이 없으니 다른 사람들이 할 리가 없다."],["この{店|みせ}は{店員|てんいん}の{態度|たいど}からして{悪|わる}い。","이 가게는 점원 태도부터가 나쁘다."]],"note":"「にしては」(~치고는)와 구별: リーダーにしては = 리더치고는(예상과 다름) / リーダーからして = 리더부터가(그러니 다른 사람은 더). 「〜からすると」(~로 보아)와도 달라요.","rel":["m-q1"],"d":"2026-11-22"},
-{"id":"g-omoigasuru","p":"〜{思|おも}いがする","lv":"N2","m":"~한 기분(느낌)이 들다, ~한 심정이다","c":"동사・い형용사 보통형＋思いがする","ex":[["{身|み}の{引|ひ}き{締|し}まる{思|おも}いがします。","마음이 다잡아지는 기분이 듭니다."],["{胸|むね}が{痛|いた}む{思|おも}いがした。","가슴이 아픈 심정이었다."]],"note":"비슷한 말 「〜{気|き}がする」. {考|かんが}え・{見込|みこ}み는 「がする」와 같이 쓰지 않아요.","rel":["m-q4","w-minohikishimaru"],"d":"2026-11-22"},
-{"id":"g-buri","p":"Nぶり／ます{形|けい}＋ぶり","lv":"N2","m":"~하는 모습·태도 / (기간＋ぶり) ~만에","c":"명사・동사 ます형＋ぶり (회화: 〜っぷり) / 기간＋ぶり","ex":[["{彼|かれ}の{仕事|しごと}ぶりは{真面目|まじめ}だ。","그의 일하는 태도는 성실하다."],["{見事|みごと}な{食|た}べっぷりだね。","먹는 모습이 아주 시원시원하네."],["3{年|ねん}ぶりに{国|くに}へ{帰|かえ}った。","3년 만에 고국에 돌아갔다."]],"note":"뜻이 두 가지예요. ① 모습·태도: {話|はな}しぶり(말투), {暮|く}らしぶり(사는 모습) ② 기간＋ぶり '~만에': {久|ひさ}しぶり(오랜만). 「〜っぷり」는 기세 좋은 느낌({飲|の}みっぷり).","rel":["w-shigotoburi"],"d":"2026-11-22"},
-{"id":"g-toittaraarya","p":"〜といったらありゃしない／〜といったらない","lv":"N1","m":"너무너무 ~하다, ~하기 짝이 없다 (말로 다 못 할 정도)","c":"い형용사 사전형・な형용사 어간・명사＋といったら(ありゃし)ない","ex":[["ばかばかしいといったらありゃしない。","어처구니없기 짝이 없다."],["{朝|あさ}の{満員電車|まんいんでんしゃ}は{苦|くる}しいといったらない。","아침 만원 전철은 괴롭기 이를 데 없다."],["{一人|ひとり}で{留守番|るすばん}するのは{心細|こころぼそ}いといったらありゃしない。","혼자 집 보는 건 너무너무 불안하다."]],"note":"「ありゃしない」는 「ありはしない」의 회화체라 불만·짜증 같은 나쁜 느낌에 주로 써요. 「〜といったらない」는 좋은 뜻에도 써요 ({嬉|うれ}しいといったらない). 「〜ったらない」로 줄이기도 해요.","rel":["w-bakabakashii"],"d":"2026-11-22"},
-{"id":"g-tokade","p":"〜とかで","lv":"N2","m":"~라면서, ~라나 해서 (남에게 들은 이유를 전함)","c":"보통형＋とかで (명사・な형용사는 〜だとかで)","ex":[["{急用|きゅうよう}ができたとかで、ただいま{帰|かえ}りました。","급한 볼일이 생겼다면서 방금 돌아갔습니다."],["{体調|たいちょう}が{悪|わる}いとかで、{田中|たなか}さんは{今日|きょう}{休|やす}んでいる。","몸이 안 좋다나 해서 다나카 씨는 오늘 쉬고 있다."]],"note":"직접 확인한 게 아니라 들은 이유라서 조금 흐릿한 느낌. 같은 계열: 문장 끝의 「〜とか」(~라나 봐: {明日|あした}は{雨|あめ}だとか). 뒤에는 그 사람이 한 일·상태가 와요.","rel":["w-kyuuyou","w-tadaima"],"d":"2026-11-22"},
-{"id":"g-youtosuru","p":"〜（よ）うとする","lv":"N3","m":"~하려고 하다 (막 하려는 참)","c":"동사 의지형(〜よう／〜おう)＋とする","ex":[["ちょうど{出|で}かけようとしていたところへ、{国|くに}の{母|はは}から{小包|こづつみ}が{届|とど}いた。","마침 외출하려던 참에, 고향의 어머니에게서 소포가 도착했다."],["{寝|ね}ようとしたら、{電話|でんわ}が{鳴|な}った。","자려고 했더니 전화가 울렸다."]],"note":"의지형으로 만들어요: {出|で}かける→{出|で}かけよう, {行|い}く→{行|い}こう, する→しよう. 「{出|で}かけるようとする」✕ (사전형＋よう가 아니에요).","rel":["g-tokoroe"],"d":"2026-11-22"},
-{"id":"g-tokoroe","p":"〜ところへ／〜ところに","lv":"N2","m":"마침 ~하고 있을 때(에) — 다른 일이 끼어듦","c":"동사 사전형・た형・ている형・(よ)うとしている＋ところへ／に","ex":[["ちょうど{出|で}かけようとしていたところへ、{国|くに}の{母|はは}から{小包|こづつみ}が{届|とど}いた。","마침 외출하려던 참에, 고향의 어머니에게서 소포가 도착했다."],["{食事|しょくじ}をしているところへ、{友達|ともだち}が{来|き}た。","밥을 먹고 있는데 친구가 왔다."]],"note":"뒤에는 '누가 오다·연락이 오다·일이 생기다'처럼 그 상황에 끼어드는 일이 와요. 「〜ところを」는 '~하는 장면을'({危|あぶ}ないところを{助|たす}けられた)이라 달라요.","rel":["g-youtosuru","w-kozutsumi"],"d":"2026-11-22"}
-],
-"kanji":[
-{"id":"k-kou","k":"構","on":"コウ","kun":"かま(う)・かま(える)","s":14,"r":"木 (きへん)","tip":"오른쪽 冓는 나무를 엇갈려 짜 맞춘 틀 → 나무를 짜 맞춰 세운 '구조'","w":[["{構|かま}う","신경 쓰다"],["{構|かま}える","자세를 취하다"],["{結構|けっこう}","괜찮음, 꽤"],["{構成|こうせい}","구성"],["{構造|こうぞう}","구조"]],"d":"2026-11-22"},
-{"id":"k-ju","k":"受","on":"ジュ","kun":"う(ける)・う(かる)","s":8,"r":"又 (また)","tip":"위의 爫(건네는 손)와 아래 又(받는 손) → 주고받기 → 받다","w":[["{受|う}かる","합격하다"],["{受|う}ける","받다, 시험 보다"],["{受験|じゅけん}","수험"],["{受付|うけつけ}","접수(처)"]],"d":"2026-11-22"},
-{"id":"k-seki","k":"積","on":"セキ","kun":"つ(む)・つ(もる)","s":16,"r":"禾 (のぎへん)","tip":"수확한 벼(禾)를 차곡차곡 쌓는 모습. 積極的은 せっきょくてき (촉음화 주의)","w":[["{見積|みつ}もり","견적"],["{積|つ}もる","쌓이다"],["{面積|めんせき}","면적"],["{積極的|せっきょくてき}","적극적"]],"d":"2026-11-22"},
-{"id":"k-shitsu","k":"失","on":"シツ","kun":"うしな(う)","s":5,"r":"大 (だい)","tip":"손(手)에서 물건이 빠져나가는 모양 → 잃다. 失敗는 しっぱい (촉음화)","w":[["{失|うしな}う","잃다"],["{失礼|しつれい}","실례"],["{失敗|しっぱい}","실패"],["{失業|しつぎょう}","실업"]],"d":"2026-11-22"},
-{"id":"k-shuku","k":"祝","on":"シュク・シュウ","kun":"いわ(う)","s":9,"r":"礻 (しめすへん)","tip":"제단(礻) 앞에서 비는 사람(兄) → 축복. 모양 비슷한 呪う(のろう)는 '저주하다'","w":[["{祝|いわ}う","축하하다"],["お{祝|いわ}い","축하(선물)"],["{祝日|しゅくじつ}","공휴일"],["{祝福|しゅくふく}","축복"],["ご{祝儀|しゅうぎ}","축의금"]],"d":"2026-11-22"},
-{"id":"k-toku","k":"得","on":"トク","kun":"え(る)・う(る)","s":11,"r":"彳 (ぎょうにんべん)","tip":"彳(길을 가다)＋오른쪽(재물 貝＋손 寸) → 가서 재물을 손에 넣다 → 얻다. ます형＋得る는 보통 うる로 읽어요.","w":[["{得|え}る","얻다"],["あり{得|え}ない","있을 수 없다"],["{得意|とくい}","잘함, 자신 있음"],["{納得|なっとく}","납득"],["{説得|せっとく}","설득"]],"d":"2026-11-22"},
-{"id":"k-jun","k":"巡","on":"ジュン","kun":"めぐ(る)","s":6,"r":"巛 (かわ)","tip":"巛(굽이쳐 흐르는 냇물)＋辶(가다) → 냇물처럼 빙 돌아가다 → 돌다·순찰하다. お巡りさん의 まわ는 이 단어에서만 쓰는 특별한 읽기예요. (사전에 따라 부수를 辶로 보기도 해요)","w":[["お{巡|まわ}りさん","순경, 경찰관"],["{巡|めぐ}る","돌다, 순회하다"],["{巡査|じゅんさ}","순경 (계급)"],["{巡回|じゅんかい}","순회"],["{一巡|いちじゅん}","한 바퀴"]],"d":"2026-11-22"}
-],
-"mistakes":[
-{"id":"m-q6","r":"x","src":"문법공략편 제3장 p.60 · 6번 (문법 059)","q":"{赤|あか}ちゃんの{最初|さいしょ}の{愛着|あいちゃく}{要求|ようきゅう}の{対象|たいしょう}は{絶対|ぜったい}に{母親|ははおや}で（　）、{必|かなら}ずしもそうではないと{思|おも}います。","o":["なくてはならないからといって","なくてはならないかというと","あるわけにはいかないからといって","あるわけにはいかないかというと"],"ok":["~여야 한다고 해서","~여야 하느냐 하면","(사정상) ~일 수는 없다고 해서","(사정상) ~일 수는 없느냐 하면"],"mine":4,"ans":2,"key":"Aかというと、（{必|かなら}ずしも）そうではない","tr":"아기의 첫 애착 요구 대상이 꼭 엄마여야 하느냐 하면, 반드시 그렇지는 않다고 생각합니다.","why":["뒷부분 かというと는 맞았어요. 문제는 앞부분.","「{母親|ははおや}で＋？」에는 '엄마여야 한다' → でなくてはならない","あるわけにはいかない는 '(사정상) 엄마일 수는 없다'라서 뜻이 어긋나요.","1번 からといって는 함정: 「そう」가 앞 내용 자체를 가리키므로 かというと."],"rel":["g-katoiuto","g-karatoitte","g-wakenihaikanai","g-nakutehanaranai"],"d":"2026-11-22"},
-{"id":"m-q7","r":"x","src":"문법공략편 제3장 p.60 · 7번 (문법 062)","q":"{待|ま}ちに{待|ま}ったゴールデンウィークがやってきた。それを{祝|いわ}うように、{今日|きょう}の{最高|さいこう}{気温|きおん}は29{度|ど}。ところが{私|わたし}はといえば、{先日|せんじつ}からの{風邪|かぜ}が{長引|ながび}いてしまい、このままではせっかくのゴールデンウィークが（　）。","o":["{台無|だいな}しになりかねない","{台無|だいな}しになったようだ","{台無|だいな}しになってはならない","{台無|だいな}しになりかけている"],"ok":["엉망이 될 수도 있다 (나쁜 결과 우려)","엉망이 된 것 같다 (이미 일어난 일)","엉망이 되어서는 안 된다 (금지)","엉망이 되어 가고 있다 (진행 중)"],"mine":2,"ans":1,"key":"このままでは 〜 ます{形|けい}＋かねない","tr":"…며칠 전 걸린 감기가 오래가서, 이대로라면 모처럼의 골든위크를 망칠지도 모른다.","why":["「このままでは」(이대로 가면) → 아직 안 일어난 나쁜 결과 → かねない","2 〜たようだ: 이미 일어난 일의 추측 → 미래 결과와 안 맞음","3 〜てはならない: 금지·당위라 예측 자리에 안 맞음","4 〜かけている: '~되어 가는 중'이라는 현재 상태"],"rel":["g-kanenai","g-osoregaaru","g-kaneru","g-machinimatta","g-toieba"],"d":"2026-11-22"},
-{"id":"m-q11","t":"order","r":"x","src":"문법공략편 제3장 問題6 · 11번 (문법 066)","q":"A「おとといは{大雨|おおあめ}、{昨日|きのう}は{何回|なんかい}も{音|おと}が{出|で}なくなったりするというトラブルが{発生|はっせい}して{嫌|いや}になるよね。」\nB「{本当|ほんとう}だよ。{最終日|さいしゅうび}の[[]]。」","o":["{何|なに}も","{今日|きょう}こそ","ように","{起|お}こりません"],"ok":["아무것도 (+부정)","오늘만큼은","~하기를 (기원) / ~처럼","일어나지 않습니다"],"st":3,"ord":[2,1,4,3],"my":[3,2,1,4],"key":"{最終日|さいしゅうび}の{今日|きょう}こそ ＋ {何|なに}も〜ません ＋ ように","tr":"A: 그저께는 폭우, 어제는 몇 번이나 소리가 안 나오는 트러블이 생겨서 지긋지긋하지. B: 정말이야. 마지막 날인 오늘만큼은 아무 일도 일어나지 않기를.","why":["「〜ますように」는 문장 끝에서 '~하기를'(기원) → {起|お}こりません＋ように가 맨 뒤","「{最終日|さいしゅうび}の」 뒤에는 명사 → {今日|きょう}こそ (마지막 날인 오늘만큼은)","{何|なに}も는 부정과 짝 → {何|なに}も{起|お}こりません","내 순서처럼 ように를 앞에 두면 「{最終日|さいしゅうび}のように」(마지막 날처럼)가 돼서 뜻이 안 맞아요."],"rel":["g-masuyouni","g-koso","w-saishuubi"],"d":"2026-11-22"},
-{"id":"m-q12","t":"order","r":"o","src":"문법공략편 제3장 問題6 · 12번 (문법 053)","q":"{一|ひと}つの{目的|もくてき}に{対|たい}して{複数|ふくすう}の{目標|もくひょう}は{存在|そんざい}し{得|う}るが、[[]]ことだ。","o":["{対|たい}して","{存在|そんざい}し{得|え}ない","{複数|ふくすう}の{目的|もくてき}が","{一|ひと}つの{目標|もくひょう}に"],"ok":["대해(서)","존재할 수 없다","여러 목적이","하나의 목표에"],"st":3,"ord":[4,1,3,2],"my":[4,1,3,2],"key":"Aに{対|たい}してBは{存在|そんざい}し{得|う}るが、Bに{対|たい}してAは{存在|そんざい}し{得|え}ない","tr":"하나의 목적에 대해 여러 목표는 존재할 수 있지만, 하나의 목표에 대해 여러 목적이 존재할 수는 없다는 것이다.","miss":[["{存在|そんざい}し{得|う}る","g-uru","존재할 수 있다"],["{存在|そんざい}し{得|え}ない","g-uru","존재할 수 없다"]],"why":["앞 절을 뒤집은 짝 구조예요: {目的|もくてき}과 {目標|もくひょう} 자리를 바꾸면 순서가 보여요.","ます형＋{得|う}る(~할 수 있다) ↔ {得|え}ない(~할 수 없다). 부정은 えない만.","순서까지 모두 맞았어요. 得る만 확실히 외우면 돼요."],"rel":["g-uru","k-toku"],"d":"2026-11-22"},
-{"id":"m-q13","t":"order","r":"g","warn":"★는 맞았지만 순서 틀림","src":"문법공략편 제3장 問題6 · 13번 (문법 057)","q":"お{巡|まわ}りさんで[[]]{見|み}ず{知|し}らずの{人|ひと}に{行|い}き{先|さき}を{尋|たず}ねたりはしないものだ。","o":["ことがない","かぎり","さえも","よほどの"],"ok":["일이 없는","~하는 한","~조차도","어지간한, 웬만한"],"st":3,"ord":[3,4,1,2],"my":[4,3,1,2],"key":"Nでさえも ＋ よほどのことがないかぎり","tr":"경찰관조차도 어지간한 일이 없는 한, 생판 모르는 사람에게 행선지를 묻거나 하지는 않는 법이다.","miss":[["お{巡|まわ}りさん","w-omawarisan"],["よほどの","w-yohodo","어지간한, 웬만한"],["{見|み}ず{知|し}らず","w-mizushirazu"],["{行|い}き{先|さき}","w-ikisaki"],["{尋|たず}ねる","w-tazuneru"],["〜でさえも","g-desae","~조차도"]],"why":["★는 맞았지만 앞 두 칸이 바뀌었어요 (내 4-3 → 정답 3-4). 운이 따른 문제!","「お{巡|まわ}りさんで」의 で 바로 뒤에는 さえ(も) → でさえも(~조차도)","「よほどのことがないかぎり」(어지간한 일이 없는 한)는 한 덩어리로 외우기","〜たりはしない: '~하거나 하지는 않는다'(부정 강조) / 〜ものだ: '~하는 법이다'"],"rel":["w-omawarisan","w-yohodo","w-mizushirazu","w-ikisaki","w-tazuneru","g-desae"],"d":"2026-11-22"},
-{"id":"m-q14","t":"order","r":"o","src":"문법공략편 제3장 問題6 · 14번 (문법 063)","q":"{高|たか}い{所|ところ}から{見下|みお}ろすパリの{景色|けしき}は{最高|さいこう}です。{数々|かずかず}の{映画|えいが}の[[]]{一枚|いちまい}を{撮|と}ってみてはいかがでしょうか。","o":["{舞台|ぶたい}ともなった","{主人公|しゅじんこう}になりきったかの","{場所|ばしょ}で{映画|えいが}の","ような"],"ok":["무대가 되기도 한","주인공이 완전히 된 듯(한)","장소에서 영화의","~같은"],"st":3,"ord":[1,3,2,4],"my":[1,3,2,4],"key":"Nの{舞台|ぶたい}ともなった{場所|ばしょ} ＋ 〜になりきったかのような＋N","tr":"높은 곳에서 내려다보는 파리의 경치는 최고입니다. 수많은 영화의 무대가 되기도 했던 곳에서, 영화 주인공이 된 듯한 사진 한 장을 찍어 보는 건 어떨까요?","miss":[["{見下|みお}ろす","w-miorosu"],["{数々|かずかず}","w-kazukazu"]],"why":["「{映画|えいが}の」 뒤에는 명사 → {舞台|ぶたい}ともなった(무대가 되기도 한) ＋ {場所|ばしょ}で","「かの」 뒤에는 ような → 〜かのような(마치 ~인 듯한)＋{一枚|いちまい}","なりきる: 완전히 ~가 되다 ({主人公|しゅじんこう}になりきる: 주인공이 된 기분으로)"],"rel":["w-miorosu","w-kazukazu"],"d":"2026-11-22"},
-{"id":"m-q15","t":"order","r":"o","src":"문법공략편 제3장 問題6 · 15번 (문법 070)","q":"「{乗|の}り{掛|か}かった{船|ふね}」ということわざは、{乗|の}って{岸|きし}を{離|はな}れた{船|ふね}からは{下船|げせん}できない[[]]ことのたとえである。","o":["{物事|ものごと}を{始|はじ}めてしまった","{以上|いじょう}","{途中|とちゅう}でやめるわけにはいかない","ところから"],"ok":["일을 시작해 버린","~한 이상","중간에 그만둘 수는 없다","~라는 데서 (말이 생긴 까닭)"],"st":3,"ord":[4,1,2,3],"my":[4,1,2,3],"key":"〜ところから(~라는 데서) ＋ 〜た{以上|いじょう}(~한 이상) ＋ 〜わけにはいかない","tr":"'올라탄 배'라는 속담은, 타고서 물가를 떠난 배에서는 내릴 수 없다는 데서, 일을 시작한 이상 중간에 그만둘 수는 없다는 것을 빗댄 말이다.","miss":[["ことわざ","w-kotowaza"],["{岸|きし}","w-kishi"],["{離|はな}れる","w-hanareru"],["{下船|げせん}","w-gesen"]],"why":["「{下船|げせん}できない」 뒤 → ところから(~라는 데서: 말이 생긴 까닭)","た형＋{以上|いじょう}: ~한 이상 → {始|はじ}めてしまった{以上|いじょう}","{以上|いじょう} 뒤에는 당연한 결론 → {途中|とちゅう}でやめるわけにはいかない","「{乗|の}り{掛|か}かった{船|ふね}」= 이왕 시작한 일이라 중간에 그만둘 수 없음"],"rel":["w-kotowaza","w-kishi","w-hanareru","w-gesen","g-wakenihaikanai"],"d":"2026-11-22"},
-{"id":"m-q1","r":"x","src":"문법공략편 제3장 問題5 · 1번 (문법 067)","q":"リーダー（　）やる{気|き}があまりにもないのだから、ほかの{人|ひと}たちがやるはずがない。","o":["までしても","とともに","にしては","からして"],"ok":["~까지 해도","~와 함께, ~함에 따라","~치고는 (예상과 다름)","~부터가 (대표 예)"],"mine":1,"ans":4,"key":"Nからして ＋ 〜のだから、ほかは〜はずがない","tr":"리더부터가 의욕이 너무 없으니, 다른 사람들이 할 리가 없다.","why":["「〜のだから、ほかの{人|ひと}たちが〜はずがない」: 대표(리더)를 들어 '다른 사람은 더더욱'이라는 구조 → からして(~부터가)","1 までしても '~까지 해도': 뒤에 '그래도 안 된다' 같은 노력의 결과가 와야 해요.","3 にしては '~치고는': 「リーダーにしてはやる気がない」까지는 되지만, 뒤의 '그러니 다른 사람도'로 이어지지 않아요.","2 とともに '~와 함께': 뜻이 안 맞아요."],"rel":["g-karashite"],"d":"2026-11-22"},
-{"id":"m-q2","r":"o","src":"문법공략편 제3장 問題5 · 2번 (문법 052)","q":"{多|おお}くの{医者|いしゃ}にかかったのだが、{何|なん}のかいもないばかりか、ますます{悪|わる}くなる（　）。","o":["{一方|いっぽう}だ","{気味|ぎみ}だ","{以上|いじょう}だ","{次第|しだい}だ"],"ok":["~하기만 한다 (한 방향으로 계속)","~한 기미다, 좀 ~한 느낌이다","~한 이상이다 / 이상입니다","~에 달렸다 / ~한 경위다"],"mine":1,"ans":1,"key":"ますます〜なる＋{一方|いっぽう}だ","tr":"여러 의사에게 진찰받았지만 아무 보람도 없을 뿐 아니라, 점점 나빠지기만 한다.","miss":[["{医者|いしゃ}にかかる","w-ishanikakaru"],["ますます","w-masumasu"]],"why":["「ますます〜なる」(점점 ~해지다)와 짝 → 〜{一方|いっぽう}だ(계속 그쪽으로만 간다)","2 {気味|ぎみ}だ: 명사·ます형＋気味({風邪|かぜ}{気味|ぎみ}). 사전형＋気味だ는 안 돼요.","3 {以上|いじょう}だ / 4 {次第|しだい}だ: 뜻이 안 맞아요.","{何|なん}のかいもない: 아무 보람(효과)도 없다 / 〜ばかりか: ~뿐 아니라"],"rel":["w-ishanikakaru","w-masumasu"],"d":"2026-11-22"},
-{"id":"m-q3","r":"o","src":"문법공략편 제3장 問題5 · 3번 (문법 054)","q":"{今年|ことし}は{夏|なつ}が{涼|すず}しかった（　）{冷房|れいぼう}はほとんど{使|つか}わずにすんだ。","o":["うえで","ためで","おかげで","くせに"],"ok":["~한 후에 / ~하는 데 있어","ため＋で (이 자리에선 안 쓰는 꼴)","~덕분에 (좋은 결과)","~주제에, ~인데도 (비난)"],"mine":3,"ans":3,"key":"〜おかげで ＋ 〜ずにすむ(~하지 않고 끝나다)","tr":"올해는 여름이 시원했던 덕분에 냉방은 거의 쓰지 않고 지나갔다.","miss":[["{冷房|れいぼう}","w-reibou"]],"why":["뒤가 좋은 결과(냉방을 안 써도 됐다) → おかげで","4 くせに는 비난, 1 うえで는 '~한 후에'라서 안 맞아요.","2 ためで: 원인은 「ために／ため」로 써요. 「ためで」는 이 자리에 오지 않아요.","〜ずにすむ: ~하지 않고 끝나다, ~안 해도 되다"],"rel":["w-reibou"],"d":"2026-11-22"},
-{"id":"m-q4","r":"x","src":"문법공략편 제3장 問題5 · 4번 (문법 056)","q":"{明日|あした}の{初出勤日|はつしゅっきんび}のことを{思|おも}うと{身|み}の{引|ひ}き{締|し}まる（　）がします。","o":["{始末|しまつ}","{思|おも}い","{見込|みこ}み","{考|かんが}え"],"ok":["(나쁜) 결과, 꼴","느낌, 심정 (〜思いがする)","전망, 가망","생각"],"mine":3,"ans":2,"key":"{身|み}の{引|ひ}き{締|し}まる{思|おも}いがする","tr":"내일 첫 출근 날을 생각하면 마음이 다잡아지는 기분이 듭니다.","miss":[["{初出勤日|はつしゅっきんび}","w-hatsushukkinbi"],["{身|み}の{引|ひ}き{締|し}まる{思|おも}い","w-minohikishimaru"],["{見込|みこ}み","w-mikomi"]],"why":["「（　）がします」 → 느낌을 나타내는 〜{思|おも}いがする(~한 기분이 들다)","「{身|み}の{引|ひ}き{締|し}まる{思|おも}い」는 한 덩어리 표현이에요.","3 {見込|みこ}み는 '전망'이라 「見込みがある／〜見込みだ」로 써요. 「がします」와 안 어울려요.","1 {始末|しまつ}는 '(결국 나쁜) 꼴', 4 {考|かんが}え는 「考えがある」로 써서 둘 다 안 맞아요."],"rel":["g-omoigasuru","w-minohikishimaru","w-mikomi","w-hatsushukkinbi"],"d":"2026-11-22"}
-]
-}
-</script>
-<!-- ④ 기능 (탭·검색·읽기 숨김·관련 항목 이동) -->
 <script>
-{
-const D=JSON.parse(document.getElementById('data').textContent);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const rb=s=>esc(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g,'<span class="fr" data-r="$2">$1</span>');
-const plain=s=>String(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g,'$1 $2');
-const views={words:'단어',grammar:'문법',kanji:'한자',mistakes:'문제'};
-const byId={};for(const v in views)for(const e of D[v])byId[e.id]=[v,e];
-const base=s=>String(s).replace(/\{([^|{}]+)\|[^{}]+\}/g,'$1');
-const label=id=>{const x=byId[id];if(!x)return id;const e=x[1];return x[0]==='mistakes'?e.src.split('·')[1].trim().split(' ')[0]:x[0]==='kanji'?e.k:base(e.w||e.p).slice(0,22)};
-const ja=s=>`<span lang="ja">${rb(s)}</span>`;
-const exs=a=>a&&a.length?`<ul class="ex">${a.map(x=>`<li><div class="j" lang="ja">${rb(x[0])}${spk(x[0])}</div><div class="k hid mn">${esc(x[1])}</div></li>`).join('')}</ul>`:'';
-const rels=a=>a&&a.length?`<div class="rel">${a.filter(i=>byId[i]).map(i=>`<button class="chip" data-go="${i}">${['단어','문법','한자','문제'][Object.keys(views).indexOf(byId[i][0])]} · <span lang="ja">${esc(label(i))}</span></button>`).join('')}</div>`:'';
-const note=n=>n?`<div class="note">${rb(n)}</div>`:'';
-/* 읽어 주기: 기기에 들어 있는 일본어 음성 사용 (인터넷·비용 없음, 누를 때만 소리) */
-const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a4.5 4.5 0 0 1 0 7M19 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const sayText=s=>String(s).replace(/\{([^|{}]+)\|([^{}]+)\}/g,'$2').replace(/(^|\n)[A-ZＡ-Ｚ]「/g,'$1').replace(/[「」]/g,'').replace(/\n/g,' ').replace(/（([ぁ-んァ-ン])）/g,'$1').replace(/[〜～]/g,'').replace(/[（(]/g,'、').replace(/[）)]/g,'').replace(/[＋／]/g,'、').replace(/^、+/,'').replace(/、{2,}/g,'、');
-const spk=(s,big,lab)=>`<button type="button" class="sp${big?' big':''}" lang="ko" data-say="${esc(sayText(s))}" aria-label="${lab||'일본어로 읽기'}">${SPK}</button>`;
-const SS='speechSynthesis' in window&&typeof SpeechSynthesisUtterance==='function'?window.speechSynthesis:null;
-const isJa=v=>/^ja([-_]|$)/i.test(v.lang);
-let voice=null,playing=null,curU=null,tt=0;
-function pickVoice(){if(!SS)return;const vs=SS.getVoices().filter(isJa);voice=vs.find(v=>v.localService&&/Kyoko|O-ren|Otoya|Hattori|Nanami|Haruka|Ayumi/i.test(v.name))||vs.find(v=>v.localService)||vs[0]||null}
-if(SS){pickVoice();if('onvoiceschanged' in SS)SS.onvoiceschanged=pickVoice}
-function toast(m,ms){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),ms||4000)}
-function stopSay(){if(playing){playing.classList.remove('on');playing=null}if(SS)SS.cancel()}
-function say(b){
-  if(!SS){toast('이 브라우저에서는 소리 읽기가 안 돼요.');return}
-  const again=playing===b;stopSay();if(again)return;
-  const all=SS.getVoices();if(all.length&&!all.some(isJa)){toast('이 기기에 일본어 음성이 없어요. 기기 설정의 음성(텍스트 읽기) 메뉴에서 일본어 음성을 한 번 내려받아 주세요.');return}
-  if(!voice)pickVoice();
-  const u=new SpeechSynthesisUtterance(b.dataset.say);u.lang='ja-JP';if(voice)u.voice=voice;u.rate=document.getElementById('slow').checked?.7:1;
-  u.onend=u.onerror=()=>{b.classList.remove('on');if(playing===b)playing=null};
-  b.classList.add('on');playing=b;curU=u;if(SS.paused)SS.resume();SS.speak(u);
-}
-/* 문제: r = x 틀림 · g 찍어서 맞음 · o 맞음 / t:'order' = ★ 배열 문제 (ord 정답 순서, my 내 순서, st ★ 칸) */
-const RS={x:'✕ 틀림',g:'△ 찍어서 맞음',o:'○ 풀어서 맞음'},RF=[['all','전체'],['x','✕ 틀림'],['g','△ 찍음'],['o','○ 맞음']];
-const st=e=>RS[e.r]?e.r:'x';
-const shortM=s=>String(s||'').split(' / ')[0].replace(/\s*\([^)]*\)\s*/g,' ').trim();
-const isOrd=e=>e.t==='order';
-const ansOf=e=>isOrd(e)?e.ord[e.st-1]:e.ans, mineOf=e=>isOrd(e)?e.my[e.st-1]:e.mine;
-const blanks=e=>[1,2,3,4].map(i=>`<span class="bl">${i===e.st?'★':''}</span>`).join('');
-const qHTML=e=>{const h=rb(e.q).replace(/\n/g,'<br>');return isOrd(e)?h.replace('[[]]',()=>blanks(e)):h};
-const fill=e=>isOrd(e)?e.q.replace('[[]]',()=>e.ord.map(i=>e.o[i-1]).join('')):e.q.replace(/（[\s　]*）/,()=>e.o[e.ans-1]);
-const fillHTML=e=>{const h=rb(e.q).replace(/\n/g,'<br>');return isOrd(e)?h.replace('[[]]',()=>`<mark class="ins">${e.ord.map((i,k)=>`<span class="pc${k+1===e.st?' st':''}">${rb(e.o[i-1])}</span>`).join('')}</mark>`):h.replace(/（[\s　]*）/,()=>`<mark class="ins"><span class="pc st">${rb(e.o[e.ans-1])}</span></mark>`)};
-const R={
- words:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head" lang="ja">${rb(e.w)}</h2>${spk(e.w,1)}<span class="date">${e.d}</span></div><p class="mean hid mn">${esc(e.m)}</p>${exs(e.ex)}${note(e.note)}${rels(e.rel)}</article>`,
- grammar:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head" lang="ja">${rb(e.p)}</h2><span class="lv">${esc(e.lv)}</span><span class="date">${e.d}</span></div><p class="mean hid mn">${esc(e.m)}</p>${e.c?`<p class="conn">접속: ${rb(e.c)}</p>`:''}${exs(e.ex)}${note(e.note)}${rels(e.rel)}</article>`,
- kanji:e=>`<article class="card kcard" id="${e.id}"><div class="cell kj"><span>${esc(e.k)}</span></div><dl class="kinfo"><dt>음독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.on)}</dd><dt>훈독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.kun)}</dd><dt>획수</dt><dd>${e.s}획</dd><dt>부수</dt><dd lang="ja">${esc(e.r)}</dd></dl><div class="words">${e.w.map(w=>`<div><span class="ja">${rb(w[0])}</span>${spk(w[0])} <span class="hid mn">${esc(w[1])}</span></div>`).join('')}</div><div class="note" style="grid-column:1/-1;margin-top:0">${rb(e.tip)}</div></article>`,
- mistakes:e=>{const s=st(e),A=ansOf(e),M=mineOf(e),ord=isOrd(e);
-  const top=`<div class="top"><span class="rs ${s}">${RS[s]}</span><span class="src">${esc(e.src)}</span>${e.warn?`<span class="warn">${esc(e.warn)}</span>`:''}<span class="date">${e.d}</span></div>`;
-  const q=`<div class="q" lang="ja">${qHTML(e)}</div>`;
-  const opts=`<ol class="opts" lang="ja">${e.o.map((o,i)=>`<li class="${i+1===A?'ans':i+1===M?'mine':''}"><span class="oj">${i+1}. ${rb(o)}</span>${e.ok&&e.ok[i]?`<span class="okr hid mn" lang="ko">${esc(e.ok[i])}</span>`:''}</li>`).join('')}</ol>`;
-  const same=ord&&e.my.join()===e.ord.join();
-  const ordl=ord?`<span class="ordl">순서 ${same?`<span class="o">${e.ord.join('-')}</span> 모두 맞음`:`내 ${e.my.join('-')} → 정답 <span class="o">${e.ord.join('-')}</span>`}</span>`:'';
-  const res=`<p class="res">${A===M?`내 답 <span class="o">${M} ○</span>`:`내 답 <span class="x">${M} ✕</span> → 정답 <span class="o">${A}</span>`}${ordl}</p>`;
-  const done=`<div class="done" lang="ja">${fillHTML(e)}${spk(fill(e),0,'완성 문장 읽기')}</div>`;
-  const key=`<div class="key" lang="ja">${rb(e.key)}</div>`,tr=`<p class="tr hid mn">${esc(e.tr)}</p>`;
-  const why=`<ul class="why">${e.why.map(w=>`<li>${rb(w)}</li>`).join('')}</ul>`;
-  const miss=e.miss&&e.miss.length?`<p class="miss">모르던 것 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
-  const a=`<article class="card${s==='o'?' slim':''}" id="${e.id}">`;
-  if(s==='x')return `${a}${top}${ord?q:`<div class="q" lang="ja">${qHTML(e)}${spk(fill(e),0,'정답을 넣어 읽기')}</div>`}${opts}${res}${ord?done:''}${key}${tr}${miss}${why}${rels(e.rel)}</article>`;
-  if(s==='g')return `${a}${top}${done}${tr}${miss}${key}<details class="more"><summary>문제 · 보기 · 해설 보기</summary>${q}${opts}${res}${why}</details>${rels(e.rel)}</article>`;
-  return `${a}${top}<details class="more"><summary lang="ja">${rb(e.key)}</summary>${done}${tr}${q}${opts}${res}${why}</details>${miss}${rels(e.rel)}</article>`}
-};
-const list=document.getElementById('list'),qi=document.getElementById('q');
-let cur='words',rf='all';
-try{const v=localStorage.getItem('odap-rf');if(RS[v]||v==='all')rf=v}catch(_){}
-function draw(){
-  const q=qi.value.trim().toLowerCase();
-  for(const v in views)document.getElementById('c-'+v).textContent=D[v].length;
-  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.v===cur));
-  let pool=D[cur];const rfEl=document.getElementById('rf');
-  if(cur==='mistakes'){const n={all:pool.length,x:0,g:0,o:0};pool.forEach(e=>n[st(e)]++);rfEl.hidden=false;
-    rfEl.innerHTML=RF.map(([k,l])=>`<button type="button" class="rfb" data-rf="${k}" aria-pressed="${rf===k}">${l}<b>${n[k]}</b></button>`).join('');
-    if(rf!=='all')pool=pool.filter(e=>st(e)===rf)}else rfEl.hidden=true;
-  /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
-  const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[1]-a[1]).map(x=>x[0]);
-  list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':'아직 비어 있어요.'}</p>`;
-  shift();
-}
-function go(v){if(!views[v])v='words';cur=v;stopSay();draw()}
-document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(t){location.hash=t.dataset.v}});
-window.addEventListener('hashchange',()=>go(location.hash.slice(1)));
-qi.addEventListener('input',draw);
-document.addEventListener('click',e=>{
-  const s=e.target.closest('.sp');if(s){say(s);return}
-  const f=e.target.closest('[data-rf]');if(f){rf=f.dataset.rf;try{localStorage.setItem('odap-rf',rf)}catch(_){}draw();return}
-  if(e.target.closest('[data-close]')){closeSheet();return}
-  if(e.target.closest('#sh-back')){shStack.pop();shShow();return}
-  const n=e.target.closest('[data-nav]');if(n){const id=n.dataset.nav;closeSheet();nav(id);return}
-  const c=e.target.closest('[data-go]');if(c){openSheet(c.dataset.go);return}
-  const r=e.target.closest('.fr');if(r){r.classList.toggle('on');return}
-  const h=e.target.closest('.hid');if(h)h.classList.toggle('on');
-});
-const sa=document.getElementById('showall'),mk=document.getElementById('mask'),sl=document.getElementById('slow');
-function opts(){document.body.classList.toggle('showall',sa.checked);document.body.classList.toggle('nomask',!mk.checked);try{localStorage.setItem('odap-opts',JSON.stringify({s:sa.checked,m:mk.checked,r:sl.checked}))}catch(_){}}
-try{const o=JSON.parse(localStorage.getItem('odap-opts')||'{}');sa.checked=!!o.s;mk.checked=!!o.m;sl.checked=!!o.r}catch(_){}
-sa.addEventListener('change',opts);mk.addEventListener('change',opts);sl.addEventListener('change',opts);opts();
-function shift(){const el=document.querySelector('.cell span');if(!el)return;const cs=getComputedStyle(el);const x=document.createElement('canvas').getContext('2d');x.font=cs.fontWeight+' 200px '+cs.fontFamily;const m=x.measureText('田');if(typeof m.fontBoundingBoxAscent!=='number')return;document.documentElement.style.setProperty('--shift',((m.fontBoundingBoxDescent-m.fontBoundingBoxAscent+m.actualBoundingBoxAscent-m.actualBoundingBoxDescent)/400).toFixed(4)+'em')}
-if(document.fonts)document.fonts.ready.then(shift);
-document.getElementById('foot').textContent=`마지막 업데이트 ${D.updated} · 단어 ${D.words.length} · 문법 ${D.grammar.length} · 한자 ${D.kanji.length} · 문제 ${D.mistakes.length}`;
-/* 미리보기 창: 칩·모르던 것을 누르면 먼저 여기서 보여 주고, '○○ 탭에서 보기'를 눌러야 이동 */
-const sh=document.getElementById('sheet'),shBox=document.getElementById('sh-box'),shBody=document.getElementById('sh-body'),shT=document.getElementById('sh-t'),shBack=document.getElementById('sh-back'),shGo=document.getElementById('sh-go');
-let shStack=[],shRet=null;
-function shShow(){const id=shStack[shStack.length-1];if(!id){closeSheet();return}const [v,e]=byId[id];
-  shT.textContent=views[v];shGo.textContent=`${views[v]} 탭에서 보기 →`;shGo.dataset.nav=id;shBack.hidden=shStack.length<2;
-  shBody.innerHTML=R[v](e).replace(/^<article class="([^"]*)" id="[^"]*">/,'<article class="$1">');shBox.scrollTop=0;if(v==='kanji')shift()}
-function openSheet(id){if(!byId[id])return;if(sh.hidden){shStack=[];shRet=document.activeElement;sh.hidden=false;document.documentElement.classList.add('sh-open')}
-  if(shStack[shStack.length-1]!==id)shStack.push(id);shShow();try{document.getElementById('sh-x').focus({preventScroll:true})}catch(_){}}
-function closeSheet(){if(sh.hidden)return;sh.hidden=true;document.documentElement.classList.remove('sh-open');stopSay();shStack=[];try{if(shRet&&shRet.isConnected)shRet.focus({preventScroll:true})}catch(_){}}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
-function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';
-  if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}go(v);
-  requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400)}})}
-window.addEventListener('popstate',()=>go(location.hash.slice(1)));
-/* 웹앱: 오프라인 저장 + 설치 단추 (claude.ai 안에서 열면 조용히 넘어감) */
-(()=>{let top=true;try{top=window.self===window.top}catch(_){top=false}
+(()=>{
   const okHost=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
-  if(!top||!okHost)return;
+  if(!okHost)return;
   try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(_){}
   if(navigator.standalone===true||matchMedia('(display-mode: standalone)').matches)return;
-  const ib=document.getElementById('inst'),ua=navigator.userAgent;let ev=null;
+  const ib=document.getElementById('inst'),t=document.getElementById('toast'),ua=navigator.userAgent;let ev=null,tt=0;
+  const toast=m=>{t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),8000)};
   const ios=/iPad|iPhone|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
   const macSafari=!ios&&/Macintosh/.test(ua)&&/Safari/.test(ua)&&!/Chrome|Chromium|Edg|Firefox/.test(ua);
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;ib.hidden=false});
@@ -410,10 +68,8 @@ window.addEventListener('popstate',()=>go(location.hash.slice(1)));
   if(ios||macSafari)ib.hidden=false;
   ib.addEventListener('click',()=>{
     if(ev){ev.prompt();ev.userChoice.finally(()=>{ev=null;ib.hidden=true});return}
-    toast(ios?'공유 단추(네모에 위쪽 화살표) → ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요.':'Safari 메뉴의 ‘파일’ → ‘Dock에 추가’를 누르면 앱처럼 쓸 수 있어요.',8000)});
+    toast(ios?'공유 단추(네모에 위쪽 화살표) → ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요.':'Safari 메뉴의 ‘파일’ → ‘Dock에 추가’를 누르면 앱처럼 쓸 수 있어요.')});
 })();
-go(location.hash.slice(1));
-}
 </script>
 </body>
 </html>
