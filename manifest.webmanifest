@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "jws_lab",
-  "short_name": "jws_lab",
+  "name": "jws-lab",
+  "short_name": "jws-lab",
   "description": "직접 만든 웹앱을 모아 둔 첫 화면",
   "lang": "ko",
   "start_url": "./",
