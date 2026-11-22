@@ -1,4 +1,4 @@
-// Hub page ("나의 웹앱"): works offline.
+// Hub page (jws_lab): works offline.
 // Handles only the hub's own files; each app folder has its own sw.js (narrower scope wins there).
 // Only deletes its own caches (prefix apps-hub-), never the apps' caches.
 const C = 'apps-hub-v1';
