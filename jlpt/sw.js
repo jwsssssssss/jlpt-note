@@ -1,8 +1,8 @@
 // JLPT note web app: works offline.
 // The page itself is network-first (new notes show up right away when online),
 // icons and fonts are cache-first. Bump C only when this file changes.
-const C = 'jlpt-note-v2';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
+const C = 'jlpt-note-v3';
+const CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -21,9 +21,9 @@ self.addEventListener('fetch', e => {
   const same = u.origin === self.location.origin;
   if (r.mode === 'navigate' || (same && (u.pathname.endsWith('/') || u.pathname.endsWith('/index.html')))) {
     e.respondWith(fetch(r).then(res => {
-      if (res.ok) { const cp = res.clone(); caches.open(C).then(c => c.put('./index.html', cp)); }
+      if (res.ok && !res.redirected) { const cp = res.clone(); caches.open(C).then(c => c.put('./', cp)); }
       return res;
-    }).catch(() => caches.match('./index.html')));
+    }).catch(() => caches.match('./')));
     return;
   }
   if (same || /(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) {

@@ -1,8 +1,8 @@
 // Hub page (jws-lab): works offline.
 // Handles only the hub's own files; each app folder has its own sw.js (narrower scope wins there).
 // Only deletes its own caches (prefix apps-hub-), never the apps' caches.
-const C = 'apps-hub-v1';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
+const C = 'apps-hub-v2';
+const CORE = ['./', './manifest.webmanifest', './icons/icon-192.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -24,9 +24,9 @@ self.addEventListener('fetch', e => {
   const rel = u.pathname.slice(base.length);
   if (rel === '' || rel === 'index.html') {
     e.respondWith(fetch(r).then(res => {
-      if (res.ok) { const cp = res.clone(); caches.open(C).then(c => c.put('./index.html', cp)); }
+      if (res.ok && !res.redirected) { const cp = res.clone(); caches.open(C).then(c => c.put('./', cp)); }
       return res;
-    }).catch(() => caches.match('./index.html')));
+    }).catch(() => caches.match('./')));
     return;
   }
   // hub files + each app's card icon (so the hub looks right offline)
