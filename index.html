@@ -52,6 +52,9 @@ h1{font-size:clamp(30px,6.5vw,40px);line-height:1.12;letter-spacing:-.02em;margi
 .meta{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--sub)}
 .go{font-weight:700;color:var(--ink);background:var(--wash);border-radius:999px;padding:4px 12px}
 footer{margin-top:auto;padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;color:var(--sub);font-size:13px}
+.fr{display:flex;align-items:center;gap:14px;margin-left:auto}
+.out{color:var(--sub);font-size:13px;text-underline-offset:3px}
+@media(hover:hover){.out:hover{color:var(--ink)}}
 </style>
 </head>
 <body>
@@ -65,7 +68,7 @@ footer{margin-top:auto;padding-top:24px;display:flex;justify-content:space-betwe
       <div class="stats" id="jlpt-stats"><div><strong data-k="words">—</strong><span>단어</span></div><div><strong data-k="grammar">—</strong><span>문법</span></div><div><strong data-k="kanji">—</strong><span>한자</span></div><div><strong data-k="mistakes">—</strong><span>문제</span></div></div>
       <div class="meta"><span id="jlpt-upd">&nbsp;</span><span class="go">열기 →</span></div></a></li>
   </ul>
-  <footer><span>새 웹앱을 만들면 카드가 하나씩 늘어나요.</span><button type="button" class="inst" id="inst" hidden>이 화면을 앱으로 설치</button></footer>
+  <footer><span>새 웹앱을 만들면 카드가 하나씩 늘어나요.</span><span class="fr"><button type="button" class="inst" id="inst" hidden>이 화면을 앱으로 설치</button><a class="out" href="/auth/logout">로그아웃</a></span></footer>
 </main>
 <script>
 // 웹앱 개수 칩: 카드 수를 셈
