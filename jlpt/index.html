@@ -193,7 +193,7 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
 .ctl{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
 .cb{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:0 13px;min-height:38px;cursor:pointer}
 .cb[aria-pressed=true],.cb[aria-expanded=true]{border-color:var(--ink);background:var(--ink);color:var(--bg);font-weight:700}
-.cb:disabled{opacity:.35;cursor:default}
+.cb[hidden]{display:none}.cb:disabled{opacity:.35;cursor:default}
 .zs{display:flex;align-items:center;gap:4px;margin-left:auto}.zs output{font-size:12px;color:var(--sub);min-width:38px;text-align:center}
 .setrow{display:flex;gap:4px 8px;flex-wrap:wrap;align-items:center;margin-top:4px}.setrow[hidden]{display:none}
 details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-content}details.hint p{margin:2px 0 0}
@@ -205,6 +205,7 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .focus .list .card{display:none;border:0;padding:6px 0 0}.focus .list .card.cur{display:block}
 .focus #toast{bottom:84px}
 @media(max-width:600px){header{padding:14px 16px 6px}h1{font-size:24px}.lead{display:none}}
+@media(max-width:600px){.ctl{gap:4px;flex-wrap:nowrap}.cb{padding:0 9px;font-size:13px;white-space:nowrap}.zs{gap:2px}.zs output{min-width:32px;font-size:11px}}
 /* 폰: 카드 네모 테두리를 없애고 화면 폭을 다 써요 (카드 사이는 옅은 띠) */
 @media(max-width:600px){main{padding:12px 0 60px}.hint,.rf{margin-left:14px;margin-right:14px}.list{gap:0}.card{border:0;border-radius:0;border-bottom:8px solid var(--paper);padding:14px 14px 18px}.card.flash{box-shadow:inset 0 0 0 3px var(--red)}.focus .list .card{padding:6px 14px 0;border-bottom:0}.empty{padding:0 14px}}
 .rzo{grid-template-columns:1fr;gap:6px}.rzp{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px 12px;min-height:44px;cursor:pointer}
@@ -236,13 +237,13 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
   <div class="ctl">
     <button type="button" class="cb" id="fbtn" aria-pressed="false">집중 보기</button>
     <button type="button" class="cb" id="setb" aria-expanded="false" aria-controls="setrow">설정</button>
+    <button type="button" class="cb" id="inst" hidden>앱 설치</button>
     <span class="zs"><button type="button" class="cb" id="zm" aria-label="글자 작게">가−</button><output id="zv">100%</output><button type="button" class="cb" id="zp" aria-label="글자 크게">가＋</button></span>
   </div>
   <div class="setrow" id="setrow" hidden>
     <label class="tg"><input type="checkbox" id="showall">읽기 모두 보기</label>
     <label class="tg"><input type="checkbox" id="mask">뜻 가리기</label>
     <label class="tg"><input type="checkbox" id="slow">천천히 읽기</label>
-    <button type="button" class="inst" id="inst" hidden>앱으로 설치</button>
   </div>
 </div></div>
 
@@ -1128,10 +1129,10 @@ window.__jlpt={QZ,qzBuild,gFind,hwOf,base,D,hlMark};  /* 시험용 손잡이 */
   const macSafari=!ios&&/Macintosh/.test(ua)&&/Safari/.test(ua)&&!/Chrome|Chromium|Edg|Firefox/.test(ua);
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;ib.hidden=false});
   window.addEventListener('appinstalled',()=>{ib.hidden=true});
-  if(ios||macSafari)ib.hidden=false;
+  ib.hidden=false;
   ib.addEventListener('click',()=>{
     if(ev){ev.prompt();ev.userChoice.finally(()=>{ev=null;ib.hidden=true});return}
-    toast(ios?'공유 단추(네모에 위쪽 화살표) → ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요.':'Safari 메뉴의 ‘파일’ → ‘Dock에 추가’를 누르면 앱처럼 쓸 수 있어요.',8000)});
+    toast(ios?'공유 단추(네모에 위쪽 화살표) → ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요.':macSafari?'Safari 메뉴의 ‘파일’ → ‘Dock에 추가’를 누르면 앱처럼 쓸 수 있어요.':'브라우저 메뉴(⋮)에서 ‘앱 설치’ 또는 ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요.',8000)});
 })();
 go(location.hash.slice(1));
 }
