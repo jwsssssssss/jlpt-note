@@ -205,6 +205,11 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .focus .list .card{display:none;border:0;padding:6px 0 0}.focus .list .card.cur{display:block}
 .focus #toast{bottom:84px}
 @media(max-width:600px){header{padding:14px 16px 6px}h1{font-size:24px}.lead{display:none}}
+.rzo{grid-template-columns:1fr;gap:6px}.rzp{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px 12px;min-height:44px;cursor:pointer}
+@media(hover:hover){.rzp:hover{border-color:var(--ink)}}
+.rzb{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 16px;min-height:40px;cursor:pointer;margin-top:6px}
+.rzr{font-size:14px;font-weight:700;margin:0 0 6px;padding:5px 10px;border-radius:8px}.rzr.ok{color:var(--ok);background:var(--okbg)}.rzr.ng{color:var(--red);background:var(--redbg)}
+.rzt{margin-left:auto}
 </style>
 </head>
 <body>
@@ -240,7 +245,7 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 </div></div>
 
 <main>
-  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 5%씩 바꿔요.</p></details>
+  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 5%씩 바꿔요.</p></details>
   <div class="rf" id="rf" hidden></div>
   <div class="list" id="list"></div>
 </main>
@@ -843,12 +848,16 @@ const R={
   const key=`<div class="key" lang="ja">${rb(e.key)}</div>`,tr=`<p class="tr hid mn">${esc(e.tr)}</p>`;
   const why=`<ul class="why">${e.why.map(w=>`<li>${rb(w)}</li>`).join('')}</ul>`;
   const miss=e.miss&&e.miss.length?`<p class="miss">모르던 것 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
-  const a=`<article class="card${s==='o'?' slim':''}" id="${e.id}">`;
+  /* 다시 풀기: 정답·해석·해설을 가리고 처음 보는 문제처럼 (보기를 누르거나 단추로 열어요) */
+  if(rz&&!rzOpen.has(e.id))return `<article class="card rzc" id="${e.id}">${top}${q}<ol class="opts rzo" lang="ja">${e.o.map((o,i)=>`<li><button type="button" class="rzp" data-rzpick="${e.id}:${i+1}"><span class="oj">${i+1}. ${rb(o)}</span></button></li>`).join('')}</ol><button type="button" class="rzb" data-rzopen="${e.id}">정답 · 해설 보기</button></article>`;
+  const pk=rz&&rzPick[e.id]?`<p class="rzr ${rzPick[e.id]===A?'ok':'ng'}">이번에 고른 답 ${rzPick[e.id]} ${rzPick[e.id]===A?'○ 맞았어요':'✕ 틀렸어요 · 정답 '+A}</p>`:'';
+  const a=`<article class="card${s==='o'&&!pk?' slim':''}" id="${e.id}">${pk}`;
   if(s==='x')return `${a}${top}${ord?q:`<div class="q" lang="ja">${qHTML(e)}${spk(fill(e),0,'정답을 넣어 읽기')}</div>`}${opts}${res}${ord?done:''}${key}${tr}${miss}${why}${rels(e.rel)}</article>`;
-  if(s==='g')return `${a}${top}${done}${tr}${miss}${key}<details class="more"><summary>문제 · 보기 · 해설 보기</summary>${q}${opts}${res}${why}</details>${rels(e.rel)}</article>`;
-  return `${a}${top}<details class="more"><summary lang="ja">${rb(e.key)}</summary>${done}${tr}${q}${opts}${res}${why}</details>${miss}${rels(e.rel)}</article>`}
+  if(s==='g')return `${a}${top}${done}${tr}${miss}${key}<details class="more"${rz?' open':''}><summary>문제 · 보기 · 해설 보기</summary>${q}${opts}${res}${why}</details>${rels(e.rel)}</article>`;
+  return `${a}${top}<details class="more"${rz?' open':''}><summary lang="ja">${rb(e.key)}</summary>${done}${tr}${q}${opts}${res}${why}</details>${miss}${rels(e.rel)}</article>`}
 };
 const list=document.getElementById('list'),qi=document.getElementById('q');
+let rz=true;const rzOpen=new Set(),rzPick={};try{if(localStorage.getItem('odap-rz')==='0')rz=false}catch(_){}
 let cur='words',rf='all';
 try{const v=localStorage.getItem('odap-rf');if(RS[v]||v==='all')rf=v}catch(_){}
 function draw(){
@@ -858,6 +867,7 @@ function draw(){
   let pool=D[cur];const rfEl=document.getElementById('rf');
   if(cur==='mistakes'){const n={all:pool.length,x:0,g:0,o:0};pool.forEach(e=>n[st(e)]++);rfEl.hidden=false;
     rfEl.innerHTML=RF.map(([k,l])=>`<button type="button" class="rfb" data-rf="${k}" aria-pressed="${rf===k}">${l}<b>${n[k]}</b></button>`).join('');
+    rfEl.innerHTML+=`<span class="rfsep" aria-hidden="true"></span><button type="button" class="rfb rzt" data-rz aria-pressed="${!rz}">${rz?'정답 · 해설 모두 보기':'정답 · 해설 다시 가리기'}</button>`;
     if(rf!=='all')pool=pool.filter(e=>st(e)===rf)}
   else if(cur==='words'||cur==='grammar'){const n={todo:0,mem:0,all:pool.length};pool.forEach(e=>ST.mem.has(e.id)?n.mem++:n.todo++);rfEl.hidden=false;
     rfEl.innerHTML=MF.map(([k,l])=>`<button type="button" class="rfb" data-mf="${k}" aria-pressed="${mf===k}">${l}<b>${n[k]}</b></button>`).join('');
@@ -883,6 +893,8 @@ document.addEventListener('click',e=>{
   if(qzClick(e))return;
   const mb=e.target.closest('[data-mem]');if(mb){memToggle(mb.dataset.mem);return}
   const mfb=e.target.closest('[data-mf]');if(mfb){mf=mfb.dataset.mf;try{localStorage.setItem('odap-mf',mf)}catch(_){}draw();return}
+  const rzb=e.target.closest('[data-rz]');if(rzb){rz=!rz;rzOpen.clear();for(const k in rzPick)delete rzPick[k];try{localStorage.setItem('odap-rz',rz?'1':'0')}catch(_){}draw();return}
+  const rzo=e.target.closest('[data-rzopen],[data-rzpick]');if(rzo){let id=rzo.dataset.rzopen;if(!id){const [i,n]=rzo.dataset.rzpick.split(':');id=i;rzPick[id]=+n}rzOpen.add(id);const y=window.scrollY;draw();window.scrollTo(0,y);return}
   const lfb=e.target.closest('[data-lf]');if(lfb){lf=lfb.dataset.lf;try{localStorage.setItem('odap-lf',lf)}catch(_){}draw();return}
   const bfb=e.target.closest('[data-bf]');if(bfb){bf=bfb.dataset.bf;try{localStorage.setItem('odap-bf',bf)}catch(_){}draw();return}
   const f=e.target.closest('[data-rf]');if(f){rf=f.dataset.rf;try{localStorage.setItem('odap-rf',rf)}catch(_){}draw();return}
@@ -929,7 +941,7 @@ function openSheet(id){if(byId[id])shOpen(id)}
 function openKanji(w,r){if([...String(w)].some(c=>KJ[c]))shOpen({w:String(w),r:r||''})}
 function closeSheet(){if(sh.hidden)return;sh.hidden=true;document.documentElement.classList.remove('sh-open');stopSay();shStack=[];try{if(shRet&&shRet.isConnected)shRet.focus({preventScroll:true})}catch(_){}}
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!sh.hidden)closeSheet();else if(!qzEl.hidden)qzClose()});
-function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';if(v==='grammar'&&(bf==='book'&&!isBook(t)||bf==='mine'&&!isMine(t)))bf='all';qzClose();
+function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;if(v==='mistakes')rzOpen.add(id);qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';if(v==='grammar'&&(bf==='book'&&!isBook(t)||bf==='mine'&&!isMine(t)))bf='all';qzClose();
   if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}fids[v]=id;go(v);
   requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400)}})}
 window.addEventListener('popstate',()=>go(location.hash.slice(1)));
