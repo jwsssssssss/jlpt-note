@@ -185,6 +185,24 @@ html.qz-open{overflow:hidden}
 footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
 @media(max-width:600px){.head{font-size:23px}.head.long{font-size:18px}.cell{width:104px;height:104px;font-size:84px}}
 @media(prefers-reduced-motion:reduce){.card,.hid{transition:none}}
+
+/* 글자 크기 · 집중 보기 */
+.list,#qz-body,#sh-body{zoom:var(--z,1)}
+.ctl{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
+.cb{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:0 13px;min-height:38px;cursor:pointer}
+.cb[aria-pressed=true],.cb[aria-expanded=true]{border-color:var(--ink);background:var(--ink);color:var(--bg);font-weight:700}
+.cb:disabled{opacity:.35;cursor:default}
+.zs{display:flex;align-items:center;gap:4px;margin-left:auto}.zs output{font-size:12px;color:var(--sub);min-width:38px;text-align:center}
+.setrow{display:flex;gap:4px 8px;flex-wrap:wrap;align-items:center;margin-top:4px}.setrow[hidden]{display:none}
+details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-content}details.hint p{margin:2px 0 0}
+#fnav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;gap:8px;align-items:center;justify-content:center;padding:8px max(5vw,16px) calc(8px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}#fnav[hidden]{display:none}
+#fnav button{flex:1 1 0;max-width:260px;font:inherit;font-size:16px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;min-height:50px;cursor:pointer}#fnav button:disabled{opacity:.35}
+#fnav output{flex:none;min-width:84px;text-align:center;font-size:14px;color:var(--sub)}
+.focus header,.focus .hint,.focus footer,.focus .rf{display:none}
+.focus main{padding-bottom:110px;max-width:720px}.focus .list{display:block}
+.focus .list .card{display:none;border:0;padding:6px 0 0}.focus .list .card.cur{display:block}
+.focus #toast{bottom:84px}
+@media(max-width:600px){header{padding:14px 16px 6px}h1{font-size:24px}.lead{display:none}}
 </style>
 </head>
 <body>
@@ -205,6 +223,13 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
   <div class="tools">
     <input id="q" type="search" placeholder="검색 (일본어·읽기·뜻)" autocomplete="off">
     <button type="button" class="qzbtn" data-qopen>퀴즈 ▶</button>
+  </div>
+  <div class="ctl">
+    <button type="button" class="cb" id="fbtn" aria-pressed="false">집중 보기</button>
+    <button type="button" class="cb" id="setb" aria-expanded="false" aria-controls="setrow">설정</button>
+    <span class="zs"><button type="button" class="cb" id="zm" aria-label="글자 작게">가−</button><output id="zv">100%</output><button type="button" class="cb" id="zp" aria-label="글자 크게">가＋</button></span>
+  </div>
+  <div class="setrow" id="setrow" hidden>
     <label class="tg"><input type="checkbox" id="showall">읽기 모두 보기</label>
     <label class="tg"><input type="checkbox" id="mask">뜻 가리기</label>
     <label class="tg"><input type="checkbox" id="slow">천천히 읽기</label>
@@ -213,11 +238,12 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
 </div></div>
 
 <main>
-  <p class="hint">점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요.</p>
+  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 바꿔요.</p></details>
   <div class="rf" id="rf" hidden></div>
   <div class="list" id="list"></div>
 </main>
 <footer id="foot"></footer>
+<nav id="fnav" hidden aria-label="카드 넘기기"><button type="button" id="fprev">◀ 이전</button><output id="fpos"></output><button type="button" id="fnext">다음 ▶</button></nav>
 <div id="toast" role="status" aria-live="polite"></div>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sh-t">
   <div class="sh-bg" data-close></div>
@@ -842,6 +868,7 @@ function draw(){
   /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
   const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort(cur==='grammar'&&bf==='book'?(a,b)=>(a[0].bi||1e6)-(b[0].bi||1e6):(a,b)=>b[0].d.localeCompare(a[0].d)||(a[0].bi&&b[0].bi?a[0].bi-b[0].bi:b[1]-a[1])).map(x=>x[0]);
   list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':(cur==='words'||cur==='grammar')&&mf==='todo'?'모두 외웠어요. 퀴즈 ▶로 확인해 보세요.':(cur==='words'||cur==='grammar')&&mf==='mem'?'아직 외운 것이 없어요.':'아직 비어 있어요.'}</p>`;
+  try{focusApply()}catch(_){}
   shift();
 }
 function go(v){if(!views[v])v='words';cur=v;stopSay();draw()}
@@ -900,7 +927,7 @@ function openKanji(w,r){if([...String(w)].some(c=>KJ[c]))shOpen({w:String(w),r:r
 function closeSheet(){if(sh.hidden)return;sh.hidden=true;document.documentElement.classList.remove('sh-open');stopSay();shStack=[];try{if(shRet&&shRet.isConnected)shRet.focus({preventScroll:true})}catch(_){}}
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!sh.hidden)closeSheet();else if(!qzEl.hidden)qzClose()});
 function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';if(v==='grammar'&&(bf==='book'&&!isBook(t)||bf==='mine'&&!isMine(t)))bf='all';qzClose();
-  if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}go(v);
+  if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}fids[v]=id;go(v);
   requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400)}})}
 window.addEventListener('popstate',()=>go(location.hash.slice(1)));
 
@@ -1043,6 +1070,22 @@ function qzClick(e){const t=e.target;let b;
   return false}
 document.addEventListener('keydown',e=>{if(qzEl.hidden||!sh.hidden||e.altKey||e.metaKey||e.ctrlKey)return;
   if(/^[1-4]$/.test(e.key)){const b=qzBody.querySelector(`.qo[data-qa="${+e.key-1}"]`);if(b&&!b.disabled){b.click();e.preventDefault()}}});
+
+/* ── 글자 크기 (가− 가＋) · 집중 보기 (한 장씩) ── */
+const ZS=[0.85,1,1.15,1.3,1.5,1.75];let zi=1;try{const v=localStorage.getItem('odap-z');if(v!==null&&ZS[+v])zi=+v}catch(_){}
+const zm=document.getElementById('zm'),zp=document.getElementById('zp'),zv=document.getElementById('zv'),fbtn=document.getElementById('fbtn'),fnav=document.getElementById('fnav'),fprev=document.getElementById('fprev'),fnext=document.getElementById('fnext'),fpos=document.getElementById('fpos'),setb=document.getElementById('setb'),setrow=document.getElementById('setrow');
+function zApply(){document.documentElement.style.setProperty('--z',ZS[zi]);zv.textContent=Math.round(ZS[zi]*100)+'%';zm.disabled=zi===0;zp.disabled=zi===ZS.length-1;try{localStorage.setItem('odap-z',zi)}catch(_){}}
+zm.onclick=()=>{if(zi>0){zi--;zApply()}};zp.onclick=()=>{if(zi<ZS.length-1){zi++;zApply()}};zApply();
+let fc=false,fids={},fi=0;try{fc=localStorage.getItem('odap-fc')==='1';fids=JSON.parse(localStorage.getItem('odap-fid')||'{}')||{}}catch(_){}
+function focusApply(){document.body.classList.toggle('focus',fc);fbtn.setAttribute('aria-pressed',fc);const cs=[...list.querySelectorAll('.card')];fnav.hidden=!fc||!cs.length;if(!fc||!cs.length)return;
+  let i=cs.findIndex(c=>c.id===fids[cur]);if(i<0)i=Math.min(fids[cur]?fi:0,cs.length-1);fi=i;fids[cur]=cs[i].id;cs.forEach((c,k)=>c.classList.toggle('cur',k===i));
+  fpos.textContent=`${i+1} / ${cs.length}`;fprev.disabled=i===0;fnext.disabled=i===cs.length-1;try{localStorage.setItem('odap-fid',JSON.stringify(fids))}catch(_){}}
+function fMove(d){const cs=list.querySelectorAll('.card');const i=Math.max(0,Math.min(cs.length-1,fi+d));if(i===fi)return;fi=i;fids[cur]=cs[i].id;stopSay();focusApply();window.scrollTo(0,0)}
+fbtn.onclick=()=>{fc=!fc;try{localStorage.setItem('odap-fc',fc?'1':'0')}catch(_){}if(!fc){const id=fids[cur];draw();const el=id&&document.getElementById(id);if(el)el.scrollIntoView({block:'start'})}else{draw();window.scrollTo(0,0)}};
+fprev.onclick=()=>fMove(-1);fnext.onclick=()=>fMove(1);
+focusApply();
+setb.onclick=()=>{setrow.hidden=!setrow.hidden;setb.setAttribute('aria-expanded',!setrow.hidden)};
+document.addEventListener('keydown',e=>{if(!fc||!sh.hidden||!qzEl.hidden||e.altKey||e.metaKey||e.ctrlKey||/^(INPUT|TEXTAREA)$/.test(e.target.tagName))return;if(e.key==='ArrowRight')fMove(1);else if(e.key==='ArrowLeft')fMove(-1)});
 window.__jlpt={QZ,qzBuild,gFind,hwOf,base,D,hlMark};  /* 시험용 손잡이 */
 /* 기록 연결: claude.ai 안에서만 (내 계정 전용 칸 data/users/<id>/progress) */
 (async()=>{try{if(!window.claude||typeof claude.use!=='function')return;const db=await claude.use('db');if(!db)return;const user=await claude.use('user');const uid=user?await user.id():null;if(!uid)return;
