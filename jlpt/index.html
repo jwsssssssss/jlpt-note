@@ -223,6 +223,20 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .ob .on{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--sub);display:inline-flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
 .ob .ot{font-weight:700;font-size:15px}.ob .ow{font-size:11px;margin-left:6px;padding:1px 6px;border-radius:6px}.ob .ow.o{color:var(--ok)}.ob .ow.x{color:var(--red)}
 .ob .og{display:block;color:var(--sub);font-size:13px;line-height:1.5;margin-top:2px}.owy{font-size:14px;margin:0 0 8px;line-height:1.6}
+.svbn{border:1.5px solid var(--red);background:var(--redbg);border-radius:14px;padding:12px 14px;margin:0 0 12px;display:flex;flex-direction:column;gap:5px}.svbn[hidden]{display:none}.svbn b{font-size:16px}
+.svs{font-size:12.5px;color:var(--sub)}.svp{display:block;height:8px;border-radius:4px;background:var(--line);overflow:hidden}.svp u{display:block;height:100%;background:var(--red)}
+.svgo{align-self:flex-start;margin-top:4px;font:inherit;font-weight:700;border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:9px 18px;min-height:44px;cursor:pointer}
+.wb{font-size:12px;color:var(--red);background:var(--redbg);border-radius:6px;padding:1px 7px;font-weight:700}
+.mh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--sub);margin:0 0 8px}.mh b.o{color:var(--ok)}.mh b.x{color:var(--red)}.mh .gr{color:var(--ok);background:var(--okbg);border-radius:999px;padding:1px 9px;font-weight:700}.mh .gn{margin-left:auto;font-size:12px}
+.sum1{font-size:14px;margin:2px 0 6px}.sum1 b{color:var(--red);font-size:12px;margin-right:4px}
+.note.fold .nt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.note.fold.open .nt{display:block}.nmore{font:inherit;font-size:13px;font-weight:700;color:var(--ai);background:none;border:0;padding:6px 0 0;cursor:pointer;min-height:32px}
+.cmp{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 12px;margin:8px 0;display:flex;flex-direction:column;gap:2px}.cmp .ct{font-size:13px}
+.cr{display:flex;gap:10px;align-items:baseline;text-align:left;font:inherit;color:inherit;background:none;border:0;border-top:1px solid var(--line);padding:6px 0;cursor:pointer;width:100%}.cr:first-of-type{border-top:0}.cr [lang=ja]{font-weight:700;flex:none;max-width:46%}.cr.me [lang=ja]{color:var(--red)}.cr .cd{font-size:13px;color:var(--sub)}
+.cq{align-self:flex-start;font:inherit;font-size:13px;font-weight:700;color:var(--red);background:none;border:0;padding:6px 0 0;cursor:pointer;min-height:32px}
+#fnav{flex-direction:column;gap:6px}.fnrow,.svrow{display:flex;gap:8px;align-items:center;justify-content:center;width:100%}.svrow[hidden]{display:none}
+.svrow button{max-width:none}#fnav .svrow .ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}.sv #fplay{flex:0 0 auto}#fplay{flex:0 0 auto;padding:0 14px;font-size:14px}#fplay[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.sv #fprev,.sv #fnext{display:none}.ex li.pl{background:var(--redbg);border-left-color:var(--red)}
+.focus .tabs,.focus .tools,.focus #setb,.focus #inst,.focus .hb{display:none}.focus .ctl{margin-top:0;flex-wrap:nowrap}.focus main{padding-bottom:150px}
 </style>
 </head>
 <body>
@@ -263,13 +277,14 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 </div></div>
 
 <main>
-  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘설정’에서 좌우 여백(바깥 · 카드 안)과 화면 밝기를 바꿀 수 있어요. ‘가− 가＋’는 글자 크기를 5%씩 바꾸고, 가운데 숫자를 누르면 크기를 바로 골라요. ↶ ↷ 는 ‘외웠어요’ 누른 것을 20번까지 되돌리거나 다시 실행해요.</p></details>
+  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). 맨 위 ‘오늘 것 시작’은 복습할 때가 된 것과 새로 볼 것을 한 장씩 보여 주고, ‘알아요’ 한 것은 1 · 3 · 7 · 14일 뒤에 다시 내요. ‘집중 보기’는 카드를 한 장씩 넘겨 보고(옆으로 밀기 · 컴퓨터는 ← → 키), ‘▶ 듣기’는 예문을 이어서 읽어 줘요, ‘설정’에서 좌우 여백(바깥 · 카드 안)과 화면 밝기를 바꿀 수 있어요. ‘가− 가＋’는 글자 크기를 5%씩 바꾸고, 가운데 숫자를 누르면 크기를 바로 골라요. ↶ ↷ 는 ‘외웠어요’ 누른 것을 20번까지 되돌리거나 다시 실행해요.</p></details>
+  <div class="svbn" id="svbn" hidden></div>
   <div class="rf" id="rf" hidden></div>
   <div class="gtg" id="gtg" hidden><button type="button" class="rfb" id="ghb" aria-pressed="false">문법 가리기</button><span id="ght"></span></div>
   <div class="list" id="list"></div>
 </main>
 <footer id="foot"></footer>
-<nav id="fnav" hidden aria-label="카드 넘기기"><button type="button" id="fprev">◀ 이전</button><output id="fpos"></output><button type="button" id="fnext">다음 ▶</button></nav>
+<nav id="fnav" hidden aria-label="카드 넘기기"><div class="svrow" id="svrow" hidden><button type="button" data-svr="0">다시 볼래요</button><button type="button" class="ok" data-svr="1">알아요 ✓</button></div><div class="fnrow"><button type="button" id="fprev">◀ 이전</button><button type="button" id="fplay" aria-pressed="false" aria-label="예문 이어 듣기">▶ 듣기</button><output id="fpos"></output><button type="button" id="fnext">다음 ▶</button></div></nav>
 <div id="toast" role="status" aria-live="polite"></div>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sh-t">
   <div class="sh-bg" data-close></div>
@@ -784,6 +799,38 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 {"id":"d-s10-6-13","set":"10 문법 확인문제 2순위 101-125","section":"問題6","no":13,"book_page":"309","type":"order","q":"今日は{吹雪|ふぶき}の[[]]車のタイヤを交換にご来店いただきました。","st":3,"o":["女性のお客さまが","いただいていた","中を","ご予約"],"ord":[3,1,4,2],"ans":4,"gram":"111"},
 {"id":"d-s10-6-14","set":"10 문법 확인문제 2순위 101-125","section":"問題6","no":14,"book_page":"309","type":"order","q":"{石原|いしはら}君は記憶力がすごい。特に人の名前を[[]]速く覚えられる人はほかにいないだろう。","st":2,"o":["覚えることに","たくさんしかも","かけては","彼ほど正確に"],"ord":[1,3,4,2],"ans":3,"gram":"115"},
 {"id":"d-s10-6-15","set":"10 문법 확인문제 2순위 101-125","section":"問題6","no":15,"book_page":"309","type":"order","q":"昔の町の様子[[]]は、町長から聞くこと全てが、知らないことばかりだった。","st":3,"o":["知らない","しか","にとって","私"],"ord":[2,1,4,3],"ans":4,"gram":"123"}
+],
+"cmp":[
+{"id":"cmp-01","t":"ない가 들어간 셋","items":[["g-naimademo","~까지는 아니더라도 — 기준을 낮춰 말함"],["g-naidemonai","~하지 않는 것도 아니다 — 약한 긍정"],["g-n1-039","~할 것까지도 없다 — 필요 없음"]]},
+{"id":"cmp-02","t":"~하자마자","items":[["g-n1-060","~인가 했더니 곧 — 뜻밖이라 놀람"],["g-n1-061","~하자마자 — 거의 동시에"],["g-n1-088","~한 순간에 — 예상 못 한 일이 바로"]]},
+{"id":"cmp-03","t":"~한 끝에","items":[["g-n1-051","오래 ~한 끝에 — 주로 나쁜 결과"],["g-n1-129","~한 끝에 — 좋은 결과 · 나쁜 결과 모두"],["g-n1-006","결국 ~꼴이다 — 나쁜 결말을 한탄"]]},
+{"id":"cmp-04","t":"판단 근거의 から","items":[["g-n1-065","~라는 점에서 말하면"],["g-n1-067","①~부터가 (예 하나를 들어) ②~로 보아"],["g-karasuruto","~의 입장 · 근거에서 보면"]]},
+{"id":"cmp-05","t":"이유의 から · こそ","items":[["g-n1-069","~라고 해서 (꼭 ~인 것은 아니다)"],["g-n1-070","~한 이상은 (당연히 ~해야)"],["g-n1-066","바로 ~이기 때문에 — 이유를 강조"],["g-n1-034","~이기에 — 글말, 긍정적인 이유"]]},
+{"id":"cmp-06","t":"~하더라도 · ~해 보았자","items":[["g-n1-087","~해 보았자 (소용없다)"],["g-n1-086","~하더라도 — 회화체"],["g-n1-109","~하더라도 — 글말"],["g-n1-001","~하든 (상관없이 결과는 같다)"]]},
+{"id":"cmp-07","t":"너무 ~하다","items":[["g-n1-003","극히 ~하다 — 글말, 주로 나쁜 평가"],["g-toittaraarya","말도 못 하게 ~하다"],["g-n1-095","~해서 견딜 수 없다 — 내 감정 · 몸 상태"],["g-n1-140","~한 데가 있다 — 문장 끝에서 느낌을 말함"]]},
+{"id":"cmp-08","t":"~할 수 없다","items":[["g-n1-046","방법이 없어서 ~할 수가 없다"],["g-n1-002","~하려 해도 (사정이 있어) 못 한다"],["g-wakenihaikanai","도리 · 사정상 ~할 수는 없다"],["g-n1-062","~하기 어렵다 (정중한 거절) / ~할지도 모른다 (나쁜 일)"],["g-n1-053","~할 수 있다 / 없다 — 가능성"]]},
+{"id":"cmp-09","t":"~없이 · ~하지 않고","items":[["g-n1-005","~하지 않고 — 동사에"],["g-n1-025","~없이(는) — 명사에"],["g-n1-083","~하지 않고 / ~하지 않아도 되다"]]},
+{"id":"cmp-10","t":"もの 시리즈","items":[["g-n1-041","절대 ~않겠다 — 강한 부정"],["g-n1-042","①할 수 있다면 ②~했다가는"],["g-n1-043","~하기는 했지만"],["g-n1-044","~했을 텐데 — 아쉬움 · 원망"],["g-n1-140","~한 데가 있다 — 느낌"],["g-n1-141","~하는 법이다 · 감탄 · 회상"]]},
+{"id":"cmp-11","t":"だけ가 들어간 것","items":[["g-n1-008","과연 ~인 만큼 — 감탄 · 납득"],["g-n1-009","~만으로 / ~일 뿐이다"],["g-n1-085","~만 · ~만큼"],["g-n1-094","~에 불과하다"],["g-n1-137","~하면 그만이다 · ~했을 뿐이다"]]},
+{"id":"cmp-12","t":"まで가 들어간 것","items":[["g-n1-037","~할 정도로"],["g-n1-038","~까지 해서 — 무리를 해서"],["g-n1-039","~할 필요도 없다"],["g-n1-137","~까지 / ~할 따름이다"]]},
+{"id":"cmp-13","t":"~을 계기로 · ~을 앞두고","items":[["g-n1-148","~을 계기로"],["g-n1-147","(발표 · 요청)을 받아서"],["g-n1-150","~을 앞두고"],["g-n1-124","~함에 따라 — 함께 변함"]]},
+{"id":"cmp-14","t":"~에 따라","items":[["g-n1-081","~에 따라 — 그것이 결과를 정함"],["g-n1-128","~에 따라서는 / ~에 관계없이"],["g-n1-124","~함에 따라 — 함께 변함"],["g-n1-143","~하기에 따라서는"]]},
+{"id":"cmp-15","t":"~의 입장에서","items":[["g-n1-119","~의 입장에서는 (그 사람 마음)"],["g-n1-123","~에게 있어서 — 평가"],["g-n1-106","~로서 — 자격 · 입장"],["g-karasuruto","~로 보아 — 판단 근거"]]},
+{"id":"cmp-16","t":"~치고는 · ~에 비해","items":[["g-n1-120","~치고는 — 예상과 다름"],["g-n1-146","~에 비해서"],["g-n1-032","~와는 달리 — 정반대"]]},
+{"id":"cmp-17","t":"~뿐만 아니라","items":[["g-n1-130","~뿐만 아니라"],["g-n1-138","~은 물론이거니와 (뒤가 더 중요)"],["g-n1-117","~에 더하여 / ~에 앞서"],["g-n1-100","~와 어우러져 (더 큰 효과)"]]},
+{"id":"cmp-18","t":"역접 ‘~지만’","items":[["g-n1-043","~하기는 했지만"],["g-nagaramo","~하면서도"],["g-n1-020","~라고는 해도"],["g-n1-011","~하면서도 (알면서도) / ~하고 있다"],["g-n1-018","~인데도 — 감사 · 사과"]]},
+{"id":"cmp-19","t":"~하기는 ~지만","items":[["g-n1-079","~하기는 ~지만 — ことは"],["g-n1-126","~하기는 ~지만 — 같은 동사를 되풀이"]]},
+{"id":"cmp-20","t":"경향 · 상태","items":[["g-gachi","자주 ~하게 됨 — 나쁜 경향"],["g-n1-040","~투성이 — 더러운 것이 묻음"],["g-n1-052","오로지 ~하기만 한다 — 한쪽으로 변함"],["g-n1-011","~하고 있는 중 — 변화가 진행"]]},
+{"id":"cmp-21","t":"놀람 · 감탄","items":[["g-n1-019","~하다니 — 놀람"],["g-n1-075","얼마나 ~했던가"],["g-n1-082","~잖아 — 놀람"],["g-n1-141","~하는 법이다 · 감탄"]]},
+{"id":"cmp-22","t":"화제를 꺼낼 때","items":[["g-n1-017","~로 말할 것 같으면 — 불만"],["g-n1-102","~라고 하면 / ~은 정말"],["g-n1-022","~쯤 되면"],["g-n1-030","~이 되어서야 · ~라도"]]},
+{"id":"cmp-23","t":"이유 ‘~라서 · ~탓에’","items":[["g-n1-013","~이라서 — 특별한 상황"],["g-n1-045","~때문에 — 글말"],["g-n1-076","~로 인해 — 근거 · 유래"],["g-n1-132","~한 탓에 — 그것만 때문에 나쁜 결과"],["g-n1-054","~덕분에"]]},
+{"id":"cmp-24","t":"~할 리 없다 · 추측","items":[["g-n1-090","~할 리 없다 — 회화"],["g-n1-136","~하지 않을 것이다 · 않겠다"],["g-n1-108","~라고는 할 수 없다"],["g-n1-084","~할 것 같지 않다"],["g-n1-012","~도 아니고"]]},
+{"id":"cmp-25","t":"후회 · 아쉬움","items":[["g-n1-131","~하는 게 아니었다"],["g-n1-134","~했으면 좋았겠다"],["g-n1-044","~했을 텐데"],["g-n1-104","하마터면 ~할 뻔했다"]]},
+{"id":"cmp-26","t":"わけ · はず · こと","items":[["g-n1-145","~한 셈이다 / ~인 것은 아니다"],["g-wakenihaikanai","~할 수는 없다"],["g-n1-133","~일 터이다"],["g-n1-078","~하기로 하다 / ~하게 되다"]]},
+{"id":"cmp-27","t":"~에서 (장소 · 상황)","items":[["g-n1-028","~(특별한 상황)에서"],["g-n1-114","~에서 — 글말"],["g-n1-115","~에 있어서는 — 자신 있는 분야"],["g-n1-111","~속을 / ~중에"]]},
+{"id":"cmp-28","t":"목적 ‘~하기 위해’","items":[["g-n1-035","~하고자 — 글말"],["g-n1-125","~하려면"],["g-n1-144","~하도록 / ~처럼"]]},
+{"id":"cmp-29","t":"~한 채 · ~만","items":[["g-n1-071","~한 채 — 그 뒤로 없음"],["g-n1-098","~하고만 있다"],["g-n1-132","~할 뿐 / ~한 탓에"],["g-n1-072","끝까지 다 ~하다"]]},
+{"id":"cmp-30","t":"정도가 낮음","items":[["g-n1-014","기껏해야 ~정도다"],["g-n1-094","~에 불과하다"],["g-n1-135","~할 정도는 아니다"]]}
 ]
 }
 </script>
@@ -797,10 +844,33 @@ const KJ=(()=>{try{return JSON.parse(document.getElementById('kdata').textConten
 /* ── 외움 기록: claude.ai 노트에서는 내 계정 전용 db(휴대폰·컴퓨터 같이), 그 밖(웹앱)은 이 기기에만 ── */
 const ST={mem:new Set(),wrong:{}};let stRef=null,stLive=false,stQ=Promise.resolve();const stOps=[];
 try{const o=JSON.parse(localStorage.getItem('odap-st')||'{}');(o.mem||[]).forEach(i=>ST.mem.add(i));ST.wrong=o.wrong||{}}catch(_){}
-const stBody=()=>({mem:[...ST.mem],wrong:ST.wrong});
+const stBody=()=>({mem:[...ST.mem],wrong:ST.wrong,rev:ST.rev,mh:ST.mh,td:ST.td});
 function stSave(){const b=stBody();try{localStorage.setItem('odap-st',JSON.stringify(b))}catch(_){}
   if(stRef){stQ=stQ.then(()=>stRef.set(Object.assign({},b,{t:Date.now()}))).catch(()=>{})}}
-const MF=[['todo','공부할 것'],['mem','외운 것'],['all','전체']];
+
+/* ── 복습 기록(rev) · 문제 다시 푼 기록(mh) · 오늘 한 것(td) ── */
+const DAY=()=>Math.floor((Date.now()+9*36e5)/864e5),MD=d=>{const x=new Date(d*864e5);return (x.getUTCMonth()+1)+'/'+x.getUTCDate()};
+const IV=[1,3,7,14,30,60];ST.rev={};ST.mh={};ST.td={d:0,n:0,nw:0};
+try{const o=JSON.parse(localStorage.getItem('odap-st')||'{}');ST.rev=o.rev||{};ST.mh=o.mh||{};if(o.td)ST.td=o.td}catch(_){}
+const tdNow=()=>{if(ST.td.d!==DAY())ST.td={d:DAY(),n:0,nw:0};return ST.td};
+function stMerge(d){const r=d.rev||{};for(const k in r){if(!ST.rev[k]||(r[k][2]||0)>=(ST.rev[k][2]||0))ST.rev[k]=r[k]}const m=d.mh||{};for(const k in m){if(!ST.mh[k]||m[k].length>=ST.mh[k].length)ST.mh[k]=m[k]}if(d.td&&d.td.d===DAY()&&d.td.n>=tdNow().n)ST.td=d.td}
+const seen=e=>ST.mem.has(e.id)||!!ST.rev[e.id];
+/* 책 단원 */
+const UNITS=[['u1','1순위 001–050'],['u2','2순위 051–150'],['kg','경어'],['vo','사역·수동'],['cj','접속어'],['dm','지시어']];
+const unitOf=e=>{const b=String(e.bno||'');if(!b)return'';if(/^\d+$/.test(b))return +b<=50?'u1':'u2';if(/^(존경|겸양|정중)/.test(b))return'kg';if(/^4-|사역|수동/.test(b))return'vo';if(/^접속어|^5-[❶❷❸]/.test(b))return'cj';if(/^지시어|^5-❹/.test(b))return'dm';return''};
+let uf='all';try{const v=localStorage.getItem('odap-uf');if(UNITS.some(u=>u[0]===v))uf=v}catch(_){}
+/* 오늘 것: 복습할 때가 된 것 먼저, 그다음 새로 볼 것(하루 20개) */
+const NEWMAX=20;let sv=false;
+function svParts(v){const src=D[v].filter(e=>!e.ref&&!ST.mem.has(e.id)&&(v!=='grammar'||uf==='all'||unitOf(e)===uf));const t=DAY();
+  const dueAll=src.filter(e=>ST.rev[e.id]&&ST.rev[e.id][1]<=t).sort((a,b)=>(ST.rev[a.id][3]||0)-(ST.rev[b.id][3]||0));const isAg=e=>ST.rev[e.id][2]===t;const due=dueAll.filter(e=>!isAg(e)),again=dueAll.filter(isAg);
+  const fresh=src.filter(e=>!ST.rev[e.id]).sort((a,b)=>(a.bi&&b.bi?a.bi-b.bi:(a.bi?1:0)-(b.bi?1:0)||0));
+  return {due,again,fresh:fresh.slice(0,Math.max(0,NEWMAX-tdNow().nw)),total:D[v].filter(e=>!e.ref).length,seenN:D[v].filter(e=>!e.ref&&seen(e)).length}}
+function svRate(ok){const c=list.querySelector('.card.cur');if(!c)return;const id=c.id,r=ST.rev[id],t=DAY(),td=tdNow();if(!r)td.nw++;td.n++;
+  if(ok){const s=Math.min((r?r[0]:-1)+1,IV.length-1);ST.rev[id]=[s,t+IV[s],t,Date.now()]}else ST.rev[id]=[0,t,t,Date.now()];
+  stSave();stopSay();fids[cur]=null;draw();window.scrollTo(0,0);if(!list.querySelector('.card')){sv=false;fc=false;draw();toast('오늘 것을 모두 끝냈어요!',4000)}}
+function svBanner(){const el=document.getElementById('svbn');if(!el)return;if((cur!=='words'&&cur!=='grammar')||fc){el.hidden=true;return}const s=svParts(cur),td=tdNow(),left=s.due.length+s.fresh.length+s.again.length;el.hidden=false;
+  el.innerHTML=`<b>오늘 복습 ${s.due.length+s.again.length}개 · 새로 볼 것 ${s.fresh.length}개</b><span class="svs">오늘 ${td.n}개 봄${cur==='grammar'&&uf!=='all'?' · '+UNITS.find(u=>u[0]===uf)[1]:''} — ‘알아요’ 한 것은 1 · 3 · 7 · 14일 뒤에 다시 나와요</span><i class="svp"><u style="width:${s.total?Math.round(s.seenN/s.total*100):0}%"></u></i><span class="svs">${cur==='grammar'?'문법':'단어'} ${s.seenN} / ${s.total} 봄</span>${left?'<button type="button" class="svgo" data-svgo>오늘 것 시작 ▶</button>':'<span class="svs">오늘 것은 다 했어요.</span>'}`}
+const MF=[['todo','공부할 것'],['mem','외운 것'],['all','전체'],['wrong','자주 틀린 것']];
 let mf='todo';try{const v=localStorage.getItem('odap-mf');if(MF.some(x=>x[0]===v))mf=v}catch(_){}
 const LVS=()=>['N1','N2','N3','N4','N5','회화'].filter(l=>D.grammar.some(e=>e.lv===l));
 let lf='all';try{const v=localStorage.getItem('odap-lf');if(v)lf=v}catch(_){}
@@ -827,6 +897,8 @@ const hlMark=(s,hl)=>{s=String(s);if(!hl)return rb(s);const toks=s.match(/\{[^|{
 const hlEx=e=>(e.ex||[]).map((x,xi)=>{const h=x[2];if(!h||h.includes('…')||h.length<2)return null;const b=base(x[0]),i=b.indexOf(h);return i>=0&&h.length<b.length-1?[xi,i,i+h.length]:null}).filter(Boolean);
 /* 문법 가리기용: 책의 빨간 부분이 없는 예문은 문형이 들어간 자리를 찾아 표시해요 */
 const gEx=e=>{let al=null;return (e.ex||[]).map(x=>{if(x[2])return x;if(!al)al=gAlts(e.p).filter(a=>!/[〜～]/.test(a)&&a.length>=2).sort((a,b)=>b.length-a.length);const b=base(x[0]),a=al.find(a=>b.includes(a));return a?[x[0],x[1],a]:x})};
+const gNote=e=>{if(!e.note)return'';const long=base(e.note).length>110;return `<div class="note gq${long?' fold':''}"><div class="nt">${rb(e.note)}</div>${long?'<button type="button" class="nmore" data-nmore>설명 더 보기 ▾</button>':''}</div>`};
+const cmpBox=e=>{const g=(D.cmp||[]).filter(x=>x.items.some(i=>i[0]===e.id));return g.map(x=>`<div class="cmp gq"><b class="ct">헷갈리는 문법${x.t?' · '+esc(x.t):''}</b>${x.items.map(i=>{const c=byId[i[0]];return c?`<button type="button" class="cr${i[0]===e.id?' me':''}" data-go="${i[0]}"><span lang="ja">${rb(c[1].p.split('／')[0])}</span><span class="cd">${esc(i[1])}</span></button>`:''}).join('')}<button type="button" class="cq" data-qcmp="${x.id}">이 묶음만 퀴즈 ▶</button></div>`).join('')};
 const exs=a=>a&&a.length?`<ul class="ex">${a.map(x=>`<li><div class="j" lang="ja">${hlMark(x[0],x[2])}${spk(x[0])}</div><div class="k hid mn">${esc(x[1])}</div></li>`).join('')}</ul>`:'';
 const rels=a=>a&&a.length?`<div class="rel">${a.filter(i=>byId[i]).map(i=>`<button class="chip" data-go="${i}">${['단어','문법','한자','문제'][Object.keys(views).indexOf(byId[i][0])]} · <span lang="ja">${esc(label(i))}</span></button>`).join('')}</div>`:'';
 const note=n=>n?`<div class="note">${rb(n)}</div>`:'';
@@ -857,6 +929,8 @@ const st=e=>RS[e.r]?e.r:'x';
 const shortM=s=>String(s||'').split(' / ')[0].replace(/\s*\([^)]*\)\s*/g,' ').trim();
 const isOrd=e=>e.t==='order';
 const ansOf=e=>isOrd(e)?e.ord[e.st-1]:e.ans, mineOf=e=>isOrd(e)?e.my[e.st-1]:e.mine;
+const isGrad=e=>{const m=ST.mh[e.id]||[];return m.length>=2&&m[m.length-1][1]===1&&m[m.length-2][1]===1};
+const mhLine=e=>{const m=ST.mh[e.id]||[];return m.length?`<p class="mh">다시 푼 기록 ${m.map(x=>`<b class="${x[1]?'o':'x'}">${x[1]?'○':'✕'} ${x[0]===DAY()?'오늘':MD(x[0])}</b>`).join('')}${isGrad(e)?'<span class="gr">졸업</span>':'<span class="gn">두 번 연속 맞히면 졸업</span>'}</p>`:''};
 const blanks=e=>[1,2,3,4].map(i=>`<span class="bl">${i===e.st?'★':''}</span>`).join('');
 const qHTML=e=>{const h=rb(e.q).replace(/\n/g,'<br>');return isOrd(e)?h.replace('[[]]',()=>blanks(e)):h};
 const fill=e=>isOrd(e)?e.q.replace('[[]]',()=>e.ord.map(i=>e.o[i-1]).join('')):e.q.replace(/（[\s　]*）/,()=>e.o[e.ans-1]);
@@ -864,7 +938,7 @@ const fillHTML=e=>{const h=rb(e.q).replace(/\n/g,'<br>');return isOrd(e)?h.repla
 const gmiss=e=>e.miss&&e.miss.length?`<p class="miss">모르던 말 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
 const R={
  words:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head" lang="ja">${rb(e.w)}</h2>${spk(e.w,1)}<span class="date">${e.d}</span>${memBtn(e.id)}</div><p class="mean hid mn">${esc(e.m)}</p>${exs(e.ex)}${note(e.note)}${rels(e.rel)}</article>`,
- grammar:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head gq${base(e.p).length>18?' long':''}" lang="ja">${e.bno&&e.p.includes('／')?e.p.split('／').map(rb).join('<br>'):rb(e.p)}</h2><span class="lv">${esc(e.lv)}</span><span class="date">${e.d}</span>${memBtn(e.id)}</div>${e.src?`<p class="gsrc">${esc(e.src)}</p>`:''}<p class="mean hid mn">${esc(e.m)}</p>${e.c?`<p class="conn gq">접속: ${rb(e.c)}</p>`:''}${exs(gEx(e))}${note(e.note).replace('class="note"','class="note gq"')}${gmiss(e)}${rels(e.rel)}</article>`,
+ grammar:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head gq${base(e.p).length>18?' long':''}" lang="ja">${e.bno&&e.p.includes('／')?e.p.split('／').map(rb).join('<br>'):rb(e.p)}</h2><span class="lv">${esc(e.lv)}</span><span class="date">${e.d}</span>${memBtn(e.id)}</div>${e.src?`<p class="gsrc">${esc(e.src)}</p>`:''}<p class="mean hid mn">${esc(e.m)}</p>${e.c?`<p class="conn gq">접속: ${rb(e.c)}</p>`:''}${e.s?`<p class="sum1 gq"><b>한 줄</b> ${rb(e.s)}</p>`:''}${cmpBox(e)}${exs(gEx(e))}${gNote(e)}${gmiss(e)}${rels(e.rel)}</article>`,
  kanji:e=>`<article class="card kcard" id="${e.id}"><div class="cell kj" data-kw="${esc(e.k)}" title="한자 풀이"><span>${esc(e.k)}</span></div><dl class="kinfo"><dt>한국</dt><dd style="font-size:17px"><b>${esc((KJ[e.k]||{}).ko||'')}</b>${(KJ[e.k]||{}).old?` <span lang="ja" style="color:var(--sub)">(${KJ[e.k].old})</span>`:''}</dd><dt>음독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.on)}</dd><dt>훈독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.kun)}</dd><dt>획수</dt><dd>${e.s}획</dd><dt>부수</dt><dd lang="ja">${esc(e.r)}${KJ[e.k]&&KJ[e.k].rn?` <span lang="ko" style="color:var(--sub)">· ${esc(KJ[e.k].rv&&String(e.r).startsWith(KJ[e.k].rv)?KJ[e.k].rvn:KJ[e.k].rn)}</span>`:''}</dd></dl><div class="words">${e.w.map(w=>`<div><span class="ja">${rb(w[0])}</span>${spk(w[0])} <span class="hid mn">${esc(w[1])}</span></div>`).join('')}</div><div class="note" style="grid-column:1/-1;margin-top:0">${rb(e.tip)}</div></article>`,
  mistakes:e=>{const s=st(e),A=ansOf(e),M=mineOf(e),ord=isOrd(e);
   const top=`<div class="top"><span class="rs ${s}">${RS[s]}</span><span class="src">${esc(e.src)}</span>${e.warn?`<span class="warn">${esc(e.warn)}</span>`:''}<span class="date">${e.d}</span></div>`;
@@ -878,9 +952,9 @@ const R={
   const why=`<ul class="why">${e.why.map(w=>`<li>${rb(w)}</li>`).join('')}</ul>`;
   const miss=e.miss&&e.miss.length?`<p class="miss">모르던 것 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
   /* 다시 풀기: 정답·해석·해설을 가리고 처음 보는 문제처럼 (보기를 누르거나 단추로 열어요) */
-  if(rz&&!rzOpen.has(e.id))return `<article class="card rzc" id="${e.id}">${top}${q}<ol class="opts rzo" lang="ja">${e.o.map((o,i)=>`<li><button type="button" class="rzp" data-rzpick="${e.id}:${i+1}"><span class="oj">${i+1}. ${rb(o)}</span></button></li>`).join('')}</ol><button type="button" class="rzb" data-rzopen="${e.id}">정답 · 해설 보기</button></article>`;
+  if(rz&&!rzOpen.has(e.id))return `<article class="card rzc" id="${e.id}">${mhLine(e)}${top}${q}<ol class="opts rzo" lang="ja">${e.o.map((o,i)=>`<li><button type="button" class="rzp" data-rzpick="${e.id}:${i+1}"><span class="oj">${i+1}. ${rb(o)}</span></button></li>`).join('')}</ol><button type="button" class="rzb" data-rzopen="${e.id}">정답 · 해설 보기</button></article>`;
   const pk=rz&&rzPick[e.id]?`<p class="rzr ${rzPick[e.id]===A?'ok':'ng'}">이번에 고른 답 ${rzPick[e.id]} ${rzPick[e.id]===A?'○ 맞았어요':'✕ 틀렸어요 · 정답 '+A}</p>`:'';
-  const a=`<article class="card${s==='o'&&!pk?' slim':''}" id="${e.id}">${pk}`;
+  const a=`<article class="card${s==='o'&&!pk?' slim':''}" id="${e.id}">${pk}${mhLine(e)}`;
   if(s==='x')return `${a}${top}${ord?q:`<div class="q" lang="ja">${qHTML(e)}${spk(fill(e),0,'정답을 넣어 읽기')}</div>`}${opts}${res}${ord?done:''}${key}${tr}${miss}${why}${rels(e.rel)}</article>`;
   if(s==='g')return `${a}${top}${done}${tr}${miss}${key}<details class="more"${rz?' open':''}><summary>문제 · 보기 · 해설 보기</summary>${q}${opts}${res}${why}</details>${rels(e.rel)}</article>`;
   return `${a}${top}<details class="more"${rz?' open':''}><summary lang="ja">${rb(e.key)}</summary>${done}${tr}${q}${opts}${res}${why}</details>${miss}${rels(e.rel)}</article>`}
@@ -897,19 +971,25 @@ function draw(){
   if(cur==='mistakes'){const n={all:pool.length,x:0,g:0,o:0};pool.forEach(e=>n[st(e)]++);rfEl.hidden=false;
     rfEl.innerHTML=RF.map(([k,l])=>`<button type="button" class="rfb" data-rf="${k}" aria-pressed="${rf===k}">${l}<b>${n[k]}</b></button>`).join('');
     rfEl.innerHTML+=`<span class="rfsep" aria-hidden="true"></span><button type="button" class="rfb rzt" data-rz aria-pressed="${!rz}">${rz?'정답 · 해설 모두 보기':'정답 · 해설 다시 가리기'}</button>`;
-    if(rf!=='all')pool=pool.filter(e=>st(e)===rf)}
-  else if(cur==='words'||cur==='grammar'){const n={todo:0,mem:0,all:pool.length};pool.forEach(e=>ST.mem.has(e.id)?n.mem++:n.todo++);rfEl.hidden=false;
+    const gradN=pool.filter(isGrad).length;rfEl.innerHTML=rfEl.innerHTML.replace('<span class="rfsep"',`<button type="button" class="rfb" data-rf="grad" aria-pressed="${rf==='grad'}">졸업<b>${gradN}</b></button><span class="rfsep"`);
+    pool=rf==='grad'?pool.filter(isGrad):pool.filter(e=>!isGrad(e)&&(rf==='all'||st(e)===rf))}
+  else if(cur==='words'||cur==='grammar'){const n={todo:0,mem:0,all:pool.length,wrong:pool.filter(e=>ST.wrong[e.id]).length};pool.forEach(e=>ST.mem.has(e.id)?n.mem++:n.todo++);rfEl.hidden=false;
     rfEl.innerHTML=MF.map(([k,l])=>`<button type="button" class="rfb" data-mf="${k}" aria-pressed="${mf===k}">${l}<b>${n[k]}</b></button>`).join('');
-    if(mf==='todo')pool=pool.filter(e=>!ST.mem.has(e.id));else if(mf==='mem')pool=pool.filter(e=>ST.mem.has(e.id));
+    if(mf==='todo')pool=pool.filter(e=>!ST.mem.has(e.id));else if(mf==='mem')pool=pool.filter(e=>ST.mem.has(e.id));else if(mf==='wrong')pool=pool.filter(e=>ST.wrong[e.id]);
     if(cur==='grammar'&&D.grammar.some(isBook)){const bc=k=>pool.filter(e=>k==='all'||(k==='book'?isBook(e):isMine(e))).length;
       rfEl.innerHTML+='<span class="rfsep" aria-hidden="true"></span>'+[['all','전부'],['mine','내가 넣은 것'],['book','N1 책 (책 순서)']].map(([k,l])=>`<button type="button" class="rfb" data-bf="${k}" aria-pressed="${bf===k}">${l}<b>${bc(k)}</b></button>`).join('');
-      if(bf!=='all')pool=pool.filter(bf==='book'?isBook:isMine)}
+      if(bf!=='all')pool=pool.filter(bf==='book'?isBook:isMine);
+      if(bf==='book'){const bk=D.grammar.filter(isBook);rfEl.innerHTML+='<span class="rfsep" aria-hidden="true"></span>'+[['all','모든 단원'],...UNITS].map(([k,l])=>{const a=bk.filter(e=>k==='all'||unitOf(e)===k);return `<button type="button" class="rfb" data-uf="${k}" aria-pressed="${uf===k}">${l}<b>${a.filter(seen).length}/${a.length}</b></button>`}).join('');
+        if(uf!=='all')pool=pool.filter(e=>unitOf(e)===uf)}}
     if(cur==='grammar'){const cnt=l=>pool.filter(e=>l==='all'||e.lv===l).length;if(lf!=='all'&&!LVS().includes(lf))lf='all';
       rfEl.innerHTML+='<span class="rfsep" aria-hidden="true"></span>'+[['all','모든 급수'],...LVS().map(l=>[l,l])].map(([k,l])=>`<button type="button" class="rfb" data-lf="${k}" aria-pressed="${lf===k}">${l}<b>${cnt(k)}</b></button>`).join('');
       if(lf!=='all')pool=pool.filter(e=>e.lv===lf)}}else rfEl.hidden=true;
+  if(sv&&(cur==='words'||cur==='grammar')){const s=svParts(cur);pool=[...s.due,...s.fresh,...s.again];rfEl.hidden=true}
   /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
-  const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort(cur==='grammar'&&bf==='book'?(a,b)=>(a[0].bi||1e6)-(b[0].bi||1e6):(a,b)=>b[0].d.localeCompare(a[0].d)||(a[0].bi&&b[0].bi?a[0].bi-b[0].bi:b[1]-a[1])).map(x=>x[0]);
-  list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':(cur==='words'||cur==='grammar')&&mf==='todo'?'모두 외웠어요. 퀴즈 ▶로 확인해 보세요.':(cur==='words'||cur==='grammar')&&mf==='mem'?'아직 외운 것이 없어요.':'아직 비어 있어요.'}</p>`;
+  const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort(sv?()=>0:mf==='wrong'&&cur!=='mistakes'?(a,b)=>(ST.wrong[b[0].id]||0)-(ST.wrong[a[0].id]||0):cur==='grammar'&&bf==='book'?(a,b)=>(a[0].bi||1e6)-(b[0].bi||1e6):(a,b)=>b[0].d.localeCompare(a[0].d)||(a[0].bi&&b[0].bi?a[0].bi-b[0].bi:b[1]-a[1])).map(x=>x[0]);
+  list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':(cur==='words'||cur==='grammar')&&mf==='todo'?'모두 외웠어요. 퀴즈 ▶로 확인해 보세요.':(cur==='words'||cur==='grammar')&&mf==='mem'?'아직 외운 것이 없어요.':(cur==='words'||cur==='grammar')&&mf==='wrong'?'퀴즈에서 틀린 것이 아직 없어요.':rf==='grad'&&cur==='mistakes'?'두 번 연속 맞힌 문제가 여기 모여요.':'아직 비어 있어요.'}</p>`;
+  if(cur==='words'||cur==='grammar')list.querySelectorAll('.card').forEach(c=>{const n=ST.wrong[c.id],t=c.querySelector('.top');if(n&&t){const b=document.createElement('span');b.className='wb';b.textContent=`퀴즈에서 ${n}번 틀림`;t.appendChild(b)}});
+  try{svBanner()}catch(_){}
   try{ghApply()}catch(_){}
   try{focusApply()}catch(_){}
   shift();
@@ -924,7 +1004,12 @@ document.addEventListener('click',e=>{
   const mb=e.target.closest('[data-mem]');if(mb){memToggle(mb.dataset.mem);return}
   const mfb=e.target.closest('[data-mf]');if(mfb){mf=mfb.dataset.mf;try{localStorage.setItem('odap-mf',mf)}catch(_){}draw();return}
   const rzb=e.target.closest('[data-rz]');if(rzb){rz=!rz;rzOpen.clear();for(const k in rzPick)delete rzPick[k];try{localStorage.setItem('odap-rz',rz?'1':'0')}catch(_){}draw();return}
-  const rzo=e.target.closest('[data-rzopen],[data-rzpick]');if(rzo){let id=rzo.dataset.rzopen;if(!id){const [i,n]=rzo.dataset.rzpick.split(':');id=i;rzPick[id]=+n}rzOpen.add(id);const y=window.scrollY;draw();window.scrollTo(0,y);return}
+  const rzo=e.target.closest('[data-rzopen],[data-rzpick]');if(rzo){let id=rzo.dataset.rzopen;if(!id){const [i,n]=rzo.dataset.rzpick.split(':');id=i;rzPick[id]=+n;const me=byId[id]&&byId[id][1];if(me){(ST.mh[id]=ST.mh[id]||[]).push([DAY(),ansOf(me)===+n?1:0]);ST.mh[id]=ST.mh[id].slice(-6);stSave();if(isGrad(me))toast('두 번 연속 맞혔어요 — ‘졸업’으로 옮겼어요.',4000)}}rzOpen.add(id);const y=window.scrollY;draw();window.scrollTo(0,y);return}
+  const ufb=e.target.closest('[data-uf]');if(ufb){uf=ufb.dataset.uf;try{localStorage.setItem('odap-uf',uf)}catch(_){}draw();return}
+  if(e.target.closest('[data-svgo]')){sv=true;fc=true;fids[cur]=null;draw();window.scrollTo(0,0);return}
+  const svr=e.target.closest('[data-svr]');if(svr){svRate(svr.dataset.svr==='1');return}
+  const nm=e.target.closest('[data-nmore]');if(nm){const n=nm.closest('.note');n.classList.toggle('open');nm.textContent=n.classList.contains('open')?'접기 ▴':'설명 더 보기 ▾';return}
+  const qc=e.target.closest('[data-qcmp]');if(qc){const g=(D.cmp||[]).find(x=>x.id===qc.dataset.qcmp);if(g){QZ.qs=qzBuild(g.items.map(x=>x[0]));QZ.i=0;QZ.ok=0;QZ.wrong=[];if(QZ.qs.length){qzEl.hidden=false;document.documentElement.classList.add('qz-open');stopSay();qzShow()}}return}
   const lfb=e.target.closest('[data-lf]');if(lfb){lf=lfb.dataset.lf;try{localStorage.setItem('odap-lf',lf)}catch(_){}draw();return}
   const bfb=e.target.closest('[data-bf]');if(bfb){bf=bfb.dataset.bf;try{localStorage.setItem('odap-bf',bf)}catch(_){}draw();return}
   const f=e.target.closest('[data-rf]');if(f){rf=f.dataset.rf;try{localStorage.setItem('odap-rf',rf)}catch(_){}draw();return}
@@ -971,7 +1056,7 @@ function openSheet(id){if(byId[id])shOpen(id)}
 function openKanji(w,r){if([...String(w)].some(c=>KJ[c]))shOpen({w:String(w),r:r||''})}
 function closeSheet(){if(sh.hidden)return;sh.hidden=true;document.documentElement.classList.remove('sh-open');stopSay();shStack=[];try{if(shRet&&shRet.isConnected)shRet.focus({preventScroll:true})}catch(_){}}
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!sh.hidden)closeSheet();else if(!qzEl.hidden)qzClose()});
-function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;if(v==='mistakes')rzOpen.add(id);qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';if(v==='grammar'&&(bf==='book'&&!isBook(t)||bf==='mine'&&!isMine(t)))bf='all';qzClose();
+function nav(id){const x=byId[id];if(!x)return;const [v,t]=x;if(v==='mistakes')rzOpen.add(id);qi.value='';if(v==='mistakes'&&rf!=='all'&&st(t)!==rf)rf='all';if((v==='words'||v==='grammar')&&mf==='todo'&&ST.mem.has(id))mf='all';if(v==='grammar'&&lf!=='all'&&t.lv!==lf)lf='all';if(v==='grammar'&&uf!=='all'&&unitOf(t)!==uf)uf='all';if(mf==='wrong'&&!ST.wrong[id])mf='all';if(v==='mistakes'&&(rf==='grad')!==isGrad(t))rf='all';sv=false;if(v==='grammar'&&(bf==='book'&&!isBook(t)||bf==='mine'&&!isMine(t)))bf='all';qzClose();
   if(location.hash.slice(1)!==v){try{history.pushState(null,'','#'+v)}catch(_){}}fids[v]=id;go(v);
   requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400)}})}
 window.addEventListener('popstate',()=>go(location.hash.slice(1)));
@@ -1066,12 +1151,12 @@ function qDrill(e){const ord=e.type==='order';let stem,full,ci;
     inst:ord?'次の文の　★　に入る最もよいものを、１・２・３・４から一つ選びなさい。':INST.gblank,instJa:true,optJa:true,stem,opts:e.o.map((o,i)=>({h:rb(o),ok:i===ci})),ex:null}}
 function qzBuild(only){const ok=e=>only?only.includes(e.id):(QZ.pool==='all'||!ST.mem.has(e.id));let items=[];
   if(only||(QZ.kind!=='g'&&QZ.kind!=='book'))items.push(...D.words.filter(ok).map(e=>['w',e]));
-  if(only||(QZ.kind!=='w'&&QZ.kind!=='book'))items.push(...D.grammar.filter(e=>ok(e)&&!e.ref&&(only||QZ.lv==='all'||e.lv===QZ.lv)).map(e=>['g',e]));
+  if(only||(QZ.kind!=='w'&&QZ.kind!=='book'))items.push(...D.grammar.filter(e=>ok(e)&&!e.ref&&(only||((QZ.lv==='all'||e.lv===QZ.lv)&&(QZ.kind!=='g'||!QZ.unit||QZ.unit==='all'||unitOf(e)===QZ.unit)))).map(e=>['g',e]));
   if(only||QZ.kind==='book')items.push(...DR.filter(e=>!only||only.includes(e.id)).map(e=>['d',e]));
   items=items.map(x=>[x,Math.random()+Math.min(ST.wrong[x[1].id]||0,3)*0.4]).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
   const n=only?items.length:(QZ.n||items.length),qs=[];
   for(const [t,e] of items){if(qs.length>=n)break;let q=null;try{q=t==='w'?qWord(e):t==='g'?qGram(e):qDrill(e)}catch(_){q=null}if(q)qs.push(q)}return qs}
-function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';if(QZ.kind==='book'&&!DR.length)QZ.kind='mix';const gOK=e=>!e.ref&&(QZ.lv==='all'||e.lv===QZ.lv);
+function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';if(QZ.kind==='book'&&!DR.length)QZ.kind='mix';if(!QZ.unit||QZ.kind!=='g')QZ.unit='all';const gOK=e=>!e.ref&&(QZ.lv==='all'||e.lv===QZ.lv)&&(QZ.unit==='all'||unitOf(e)===QZ.unit);
   const cnt=a=>a.filter(e=>QZ.pool==='all'||!ST.mem.has(e.id)).length;const nw=cnt(D.words),ng=cnt(D.grammar.filter(gOK));
   const tot=QZ.kind==='book'?DR.length:(QZ.kind!=='g'?nw:0)+(QZ.kind!=='w'?ng:0);const todoW=D.words.filter(e=>!ST.mem.has(e.id)).length,todoG=D.grammar.filter(e=>gOK(e)&&!ST.mem.has(e.id)).length;
   const seg=(key,list)=>`<div class="seg">${list.map(([v,l])=>`<button type="button" data-qs="${key}:${v}" aria-pressed="${String(QZ[key])===String(v)}">${l}</button>`).join('')}</div>`;
@@ -1079,6 +1164,7 @@ function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';if(QZ.ki
   qzBody.innerHTML=`<p class="qz-tag">퀴즈 준비</p><h2 class="qz-h">실제 시험처럼 풀어 보기</h2>
   <h3>무엇을</h3>${seg('kind',[['mix','단어＋문법 섞어서'],['w','단어만'],['g','문법만'],...(DR.length?[['book',`책 확인문제 (${DR.length})`]]:[])])}
   ${QZ.kind!=='w'&&QZ.kind!=='book'?`<h3>문법 급수</h3>${seg('lv',[['all','전체'],...LVS().map(l=>[l,l])])}`:''}
+  ${QZ.kind==='g'?`<h3>책 단원</h3>${seg('unit',[['all','전체'],...UNITS])}`:''}
   ${QZ.kind!=='book'?`<h3>어디서</h3>${seg('pool',[['todo',`아직 못 외운 것 (단어 ${todoW} · 문법 ${todoG})`],['all','전부']])}`:'<p class="qz-note">책의 확인문제를 보기 순서 그대로 내요. 자주 틀린 문제가 먼저 나와요.</p>'}
   <h3>몇 문제</h3>${seg('n',[[10,'10문제'],[20,'20문제'],[0,'전부']])}
   <p class="qz-note">고른 범위 ${tot}개 · 자주 틀린 것이 먼저 나와요. 컴퓨터에서는 숫자 1~4 키로 답할 수 있어요.</p>
@@ -1140,12 +1226,23 @@ function zApply(){document.documentElement.style.setProperty('--z',ZS[zi]);zv.va
 zv.innerHTML=ZS.map((z,k)=>`<option value="${k}">${Math.round(z*100)}%</option>`).join('');zv.onchange=()=>{zi=+zv.value;zApply()};document.getElementById('hun').onclick=hUndo;document.getElementById('hre').onclick=hRedo;
 zm.onclick=()=>{if(zi>0){zi--;zApply()}};zp.onclick=()=>{if(zi<ZS.length-1){zi++;zApply()}};zApply();
 let fc=false,fids={},fi=0;try{fc=localStorage.getItem('odap-fc')==='1';fids=JSON.parse(localStorage.getItem('odap-fid')||'{}')||{}}catch(_){}
-function focusApply(){document.body.classList.toggle('focus',fc);fbtn.setAttribute('aria-pressed',fc);const cs=[...list.querySelectorAll('.card')];fnav.hidden=!fc||!cs.length;if(!fc||!cs.length)return;
+function focusApply(){document.body.classList.toggle('focus',fc);fbtn.setAttribute('aria-pressed',fc);const cs=[...list.querySelectorAll('.card')];fnav.hidden=!fc||!cs.length;document.getElementById('svrow').hidden=!sv;document.body.classList.toggle('sv',sv&&fc);if(!fc||!cs.length)return;
   let i=cs.findIndex(c=>c.id===fids[cur]);if(i<0)i=Math.min(fids[cur]?fi:0,cs.length-1);fi=i;fids[cur]=cs[i].id;cs.forEach((c,k)=>c.classList.toggle('cur',k===i));
   fpos.textContent=`${i+1} / ${cs.length}`;fprev.disabled=i===0;fnext.disabled=i===cs.length-1;try{localStorage.setItem('odap-fid',JSON.stringify(fids))}catch(_){}}
-function fMove(d){const cs=list.querySelectorAll('.card');const i=Math.max(0,Math.min(cs.length-1,fi+d));if(i===fi)return;fi=i;fids[cur]=cs[i].id;stopSay();focusApply();window.scrollTo(0,0)}
-fbtn.onclick=()=>{fc=!fc;try{localStorage.setItem('odap-fc',fc?'1':'0')}catch(_){}if(!fc){const id=fids[cur];draw();const el=id&&document.getElementById(id);if(el)el.scrollIntoView({block:'start'})}else{draw();window.scrollTo(0,0)}};
+/* 예문 이어 듣기: 지금 카드의 예문을 차례로 읽고, 끝나면 다음 카드로 */
+let pl=false,plT=null;const fplay=document.getElementById('fplay');
+function plStop(){pl=false;clearTimeout(plT);if(SS)SS.cancel();fplay.setAttribute('aria-pressed','false');fplay.textContent='▶ 듣기';list.querySelectorAll('.ex li.pl').forEach(x=>x.classList.remove('pl'))}
+function plRun(k){if(!pl)return;const c=list.querySelector('.card.cur');const bs=c?[...c.querySelectorAll('.ex .sp')]:[];list.querySelectorAll('.ex li.pl').forEach(x=>x.classList.remove('pl'));
+  if(k>=bs.length){const n=list.querySelectorAll('.card').length;if(sv||fi>=n-1){plStop();return}plT=setTimeout(()=>{fMove(1,true);plRun(0)},900);return}
+  const b=bs[k],li=b.closest('li');if(li){li.classList.add('pl');li.scrollIntoView({block:'center',behavior:'smooth'})}
+  if(!voice)pickVoice();const u=new SpeechSynthesisUtterance(b.dataset.say);u.lang='ja-JP';if(voice)u.voice=voice;u.rate=document.getElementById('slow').checked?.7:.9;let done=false;const nx=()=>{if(done)return;done=true;plT=setTimeout(()=>plRun(k+1),1100)};u.onend=nx;u.onerror=nx;SS.speak(u)}
+fplay.onclick=()=>{if(pl){plStop();return}if(!SS){toast('이 브라우저에서는 소리 읽기가 안 돼요.');return}const all=SS.getVoices();if(all.length&&!all.some(isJa)){toast('이 기기에 일본어 음성이 없어요.');return}stopSay();pl=true;fplay.setAttribute('aria-pressed','true');fplay.textContent='❚❚ 멈춤';plRun(0)};
+function fMove(d,keep){if(!keep&&pl)plStop();const cs=list.querySelectorAll('.card');const i=Math.max(0,Math.min(cs.length-1,fi+d));if(i===fi)return;fi=i;fids[cur]=cs[i].id;stopSay();focusApply();window.scrollTo(0,0)}
+fbtn.onclick=()=>{fc=!fc;if(!fc){sv=false;plStop()}try{localStorage.setItem('odap-fc',fc?'1':'0')}catch(_){}if(!fc){const id=fids[cur];draw();const el=id&&document.getElementById(id);if(el)el.scrollIntoView({block:'start'})}else{draw();window.scrollTo(0,0)}};
 fprev.onclick=()=>fMove(-1);fnext.onclick=()=>fMove(1);
+/* 집중 보기에서 옆으로 밀어 넘기기 */
+(()=>{let x0=0,y0=0,t0=0;list.addEventListener('touchstart',e=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
+  list.addEventListener('touchend',e=>{if(!fc||sv)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)>70&&Math.abs(dy)<45&&Date.now()-t0<700&&!String(getSelection())){fMove(dx<0?1:-1)}},{passive:true})})();
 focusApply();
 /* 좌우 여백: 바깥(화면 가장자리 ↔ 카드) · 카드 안(카드 가장자리 ↔ 글) — 2px씩, 0~80 */
 const MG={mo:null,mi:null};try{for(const k in MG){const v=localStorage.getItem('odap-'+k);if(v!==null&&v!=='')MG[k]=Math.max(0,Math.min(80,+v||0))}}catch(_){}
@@ -1163,6 +1260,7 @@ ghApply();
 let th='auto';try{const v=localStorage.getItem('odap-th');if(v==='light'||v==='dark')th=v}catch(_){}
 function thApply(){const r=document.documentElement;if(th==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',th);document.querySelectorAll('[data-th]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===th));
   const bg=getComputedStyle(document.body).backgroundColor;document.querySelectorAll('meta[name=theme-color]').forEach(m=>{if(th==='auto'){if(m.dataset.o)m.content=m.dataset.o}else{if(!m.dataset.o)m.dataset.o=m.content;m.content=bg}})}
+try{svBanner()}catch(_){}
 document.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{th=b.dataset.th;try{localStorage.setItem('odap-th',th)}catch(_){}thApply()});thApply();
 setb.onclick=()=>{setrow.hidden=!setrow.hidden;setb.setAttribute('aria-expanded',!setrow.hidden)};
 document.addEventListener('keydown',e=>{if(!fc||!sh.hidden||!qzEl.hidden||e.altKey||e.metaKey||e.ctrlKey||/^(INPUT|TEXTAREA)$/.test(e.target.tagName))return;if(e.key==='ArrowRight')fMove(1);else if(e.key==='ArrowLeft')fMove(-1)});
@@ -1171,12 +1269,12 @@ window.__jlpt={QZ,qzBuild,gFind,hwOf,base,D,hlMark};  /* 시험용 손잡이 */
 (async()=>{try{if(!window.claude||typeof claude.use!=='function')return;const db=await claude.use('db');if(!db)return;const user=await claude.use('user');const uid=user?await user.id():null;if(!uid)return;
   const ref=db.doc('data/users/'+uid+'/progress');
   ref.onSnapshot(s=>{if(s.metadata&&s.metadata.hasPendingWrites)return;
-    if(!stLive){stLive=true;stRef=ref;if(s.exists){const d=s.data()||{};ST.mem=new Set(d.mem||[]);ST.wrong=Object.assign({},d.wrong||{})}
+    if(!stLive){stLive=true;stRef=ref;if(s.exists){const d=s.data()||{};ST.mem=new Set(d.mem||[]);ST.wrong=Object.assign({},d.wrong||{});stMerge(d)}
       for(const op of stOps.splice(0)){if(op[0]==='m'){op[2]?ST.mem.add(op[1]):ST.mem.delete(op[1])}else ST.wrong[op[1]]=(ST.wrong[op[1]]||0)+1}
       if(!s.exists&&(ST.mem.size||Object.keys(ST.wrong).length))stSave();else{try{localStorage.setItem('odap-st',JSON.stringify(stBody()))}catch(_){}}
       draw();if(!sh.hidden)shShow();qzSync();return}
     if(!s.exists)return;const d=s.data()||{};const m=new Set(d.mem||[]);const same=m.size===ST.mem.size&&[...m].every(x=>ST.mem.has(x));
-    ST.mem=m;ST.wrong=Object.assign({},d.wrong||{});try{localStorage.setItem('odap-st',JSON.stringify(stBody()))}catch(_){}
+    ST.mem=m;ST.wrong=Object.assign({},d.wrong||{});stMerge(d);try{localStorage.setItem('odap-st',JSON.stringify(stBody()))}catch(_){}
     if(!same){draw();if(!sh.hidden)shShow();qzSync()}},()=>{});
 }catch(_){}})();
 /* 웹앱: 오프라인 저장 + 설치 단추 (claude.ai 안에서 열면 조용히 넘어감) */
