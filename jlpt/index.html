@@ -237,6 +237,34 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .svrow button{max-width:none}#fnav .svrow .ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}.sv #fplay{flex:0 0 auto}#fplay{flex:0 0 auto;padding:0 14px;font-size:14px}#fplay[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .sv #fprev,.sv #fnext{display:none}.ex li.pl{background:var(--redbg);border-left-color:var(--red)}
 .focus .tabs,.focus .tools,.focus #setb,.focus #inst,.focus .hb{display:none}.focus .ctl{margin-top:0;flex-wrap:nowrap}.focus main{padding-bottom:150px}
+
+/* ── 보기 표시(○ ✕ △) ── */
+.qrow{display:flex;gap:6px;align-items:stretch}.qrow .qo,.qrow .rzp{flex:1;min-width:0}
+.qm{flex:none;width:52px;font:inherit;font-size:12px;color:var(--sub);background:var(--bg);border:1.5px dashed var(--line);cursor:pointer}.qm.on{font-size:22px;font-weight:700;color:var(--ink);border-style:solid;border-color:var(--ink);background:var(--paper)}
+.qmh{font-size:12.5px;color:var(--sub);margin:6px 0 8px}
+.mv{display:inline-block;font-size:12px;margin-left:6px;padding:1px 7px}.mv.good{color:var(--ok);background:var(--okbg)}.mv.bad{color:var(--red);background:var(--redbg)}
+.opts .mv{display:block;width:max-content;max-width:100%;margin:2px 0 6px 1.35em;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+.mkl.good{color:var(--ok)}.mkl.bad{color:var(--red);font-weight:700}
+/* ── 각지고 정돈된 모양 (11/24) ── */
+.rf.fold .rfb:not([aria-pressed=true]):not(.rft),.rf.fold .rfsep{display:none}.rf.fold .rzt{display:inline-block!important;margin-left:0}.rft{margin-left:auto;border-style:dashed;color:var(--sub)}.rf.fold .rfb[aria-pressed=true]:not(.rzt){background:none;color:var(--ink);border-color:var(--line)}.rf.fold .rfb[aria-pressed=true] b{color:var(--sub);opacity:1}
+body *,body *::before,body *::after{border-radius:2px!important}
+.tabs{gap:0;border-bottom:1px solid var(--line)}
+.tab{border:0;border-bottom:3px solid transparent;background:none;padding:9px 14px;min-height:42px;color:var(--sub);border-radius:0!important}
+.tab[aria-selected=true]{background:none;color:var(--ink);font-weight:700;border-bottom-color:var(--ink)}.tab[aria-selected=true] b{color:var(--sub)}
+.bar{border-bottom:1px solid var(--line)}.bar-in{padding-top:4px}
+.tools input[type=search]{border-color:var(--line);background:var(--bg);min-height:42px}
+.qzbtn{min-height:42px;border-width:1.5px;letter-spacing:.02em}
+.cb{min-height:34px;padding:0 11px;font-size:13px}.zs select{min-height:34px}
+.rf{gap:5px}.rfb{min-height:34px;padding:4px 10px;font-size:13px;background:none}
+.rfb[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}.rfb[aria-pressed=true] b{color:var(--bg);opacity:.75}
+.memb{min-height:32px}.card{box-shadow:none}
+.head{letter-spacing:-.01em}.mean{font-size:15.5px}
+.ex li{border-left-width:calc(2px / var(--z,1))}
+.note,.cmp{border-left:3px solid var(--line)}
+.svbn{border-width:1px;border-left:4px solid var(--red)}
+h1 .stamp{transform:none;border-width:2px}
+.qo{min-height:54px;border-width:1px}.qo.ans,.qo.ng{border-width:1.5px}.qn{border-radius:2px!important}
+#fnav button{min-height:46px}
 </style>
 </head>
 <body>
@@ -860,7 +888,7 @@ const UNITS=[['u1','1순위 001–050'],['u2','2순위 051–150'],['kg','경어
 const unitOf=e=>{const b=String(e.bno||'');if(!b)return'';if(/^\d+$/.test(b))return +b<=50?'u1':'u2';if(/^(존경|겸양|정중)/.test(b))return'kg';if(/^4-|사역|수동/.test(b))return'vo';if(/^접속어|^5-[❶❷❸]/.test(b))return'cj';if(/^지시어|^5-❹/.test(b))return'dm';return''};
 let uf='all';try{const v=localStorage.getItem('odap-uf');if(UNITS.some(u=>u[0]===v))uf=v}catch(_){}
 /* 오늘 것: 복습할 때가 된 것 먼저, 그다음 새로 볼 것(하루 20개) */
-const NEWMAX=20;let sv=false;
+const NEWMAX=20;let sv=false,rfOpen=false;try{rfOpen=localStorage.getItem('odap-rfo')==='1'}catch(_){}
 function svParts(v){const src=D[v].filter(e=>!e.ref&&!ST.mem.has(e.id)&&(v!=='grammar'||uf==='all'||unitOf(e)===uf));const t=DAY();
   const dueAll=src.filter(e=>ST.rev[e.id]&&ST.rev[e.id][1]<=t).sort((a,b)=>(ST.rev[a.id][3]||0)-(ST.rev[b.id][3]||0));const isAg=e=>ST.rev[e.id][2]===t;const due=dueAll.filter(e=>!isAg(e)),again=dueAll.filter(isAg);
   const fresh=src.filter(e=>!ST.rev[e.id]).sort((a,b)=>(a.bi&&b.bi?a.bi-b.bi:(a.bi?1:0)-(b.bi?1:0)||0));
@@ -943,7 +971,7 @@ const R={
  mistakes:e=>{const s=st(e),A=ansOf(e),M=mineOf(e),ord=isOrd(e);
   const top=`<div class="top"><span class="rs ${s}">${RS[s]}</span><span class="src">${esc(e.src)}</span>${e.warn?`<span class="warn">${esc(e.warn)}</span>`:''}<span class="date">${e.d}</span></div>`;
   const q=`<div class="q" lang="ja">${qHTML(e)}</div>`;
-  const opts=`<ol class="opts" lang="ja">${e.o.map((o,i)=>`<li class="${i+1===A?'ans':i+1===M?'mine':''}"><span class="oj">${i+1}. ${rb(o)}</span>${e.ok&&e.ok[i]?`<span class="okr hid mn" lang="ko">${esc(e.ok[i])}</span>`:''}</li>`).join('')}</ol>`;
+  const opts=`<ol class="opts" lang="ja">${e.o.map((o,i)=>`<li class="${i+1===A?'ans':i+1===M?'mine':''}"><span class="oj">${i+1}. ${rb(o)}</span>${e.ok&&e.ok[i]?`<span class="okr hid mn" lang="ko">${esc(e.ok[i])}</span>`:''}${rz?mkVerdict((rzMark[e.id]||[])[i],i+1===A):''}</li>`).join('')}</ol>`;
   const same=ord&&e.my.join()===e.ord.join();
   const ordl=ord?`<span class="ordl">순서 ${same?`<span class="o">${e.ord.join('-')}</span> 모두 맞음`:`내 ${e.my.join('-')} → 정답 <span class="o">${e.ord.join('-')}</span>`}</span>`:'';
   const res=`<p class="res">${A===M?`내 답 <span class="o">${M} ○</span>`:`내 답 <span class="x">${M} ✕</span> → 정답 <span class="o">${A}</span>`}${ordl}</p>`;
@@ -952,7 +980,7 @@ const R={
   const why=`<ul class="why">${e.why.map(w=>`<li>${rb(w)}</li>`).join('')}</ul>`;
   const miss=e.miss&&e.miss.length?`<p class="miss">모르던 것 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
   /* 다시 풀기: 정답·해석·해설을 가리고 처음 보는 문제처럼 (보기를 누르거나 단추로 열어요) */
-  if(rz&&!rzOpen.has(e.id))return `<article class="card rzc" id="${e.id}">${mhLine(e)}${top}${q}<ol class="opts rzo" lang="ja">${e.o.map((o,i)=>`<li><button type="button" class="rzp" data-rzpick="${e.id}:${i+1}"><span class="oj">${i+1}. ${rb(o)}</span></button></li>`).join('')}</ol><button type="button" class="rzb" data-rzopen="${e.id}">정답 · 해설 보기</button></article>`;
+  if(rz&&!rzOpen.has(e.id))return `<article class="card rzc" id="${e.id}">${mhLine(e)}${top}${q}<ol class="opts rzo" lang="ja">${e.o.map((o,i)=>`<li class="qrow"><button type="button" class="rzp" data-rzpick="${e.id}:${i+1}"><span class="oj">${i+1}. ${rb(o)}</span></button><button type="button" class="qm${(rzMark[e.id]||[])[i]?' on':''}" data-rzm="${e.id}:${i}" aria-label="${i+1}번 보기에 표시">${(rzMark[e.id]||[])[i]||'표시'}</button></li>`).join('')}</ol><button type="button" class="rzb" data-rzopen="${e.id}">정답 · 해설 보기</button></article>`;
   const pk=rz&&rzPick[e.id]?`<p class="rzr ${rzPick[e.id]===A?'ok':'ng'}">이번에 고른 답 ${rzPick[e.id]} ${rzPick[e.id]===A?'○ 맞았어요':'✕ 틀렸어요 · 정답 '+A}</p>`:'';
   const a=`<article class="card${s==='o'&&!pk?' slim':''}" id="${e.id}">${pk}${mhLine(e)}`;
   if(s==='x')return `${a}${top}${ord?q:`<div class="q" lang="ja">${qHTML(e)}${spk(fill(e),0,'정답을 넣어 읽기')}</div>`}${opts}${res}${ord?done:''}${key}${tr}${miss}${why}${rels(e.rel)}</article>`;
@@ -960,7 +988,7 @@ const R={
   return `${a}${top}<details class="more"${rz?' open':''}><summary lang="ja">${rb(e.key)}</summary>${done}${tr}${q}${opts}${res}${why}</details>${miss}${rels(e.rel)}</article>`}
 };
 const list=document.getElementById('list'),qi=document.getElementById('q');
-let rz=true;const rzOpen=new Set(),rzPick={};try{if(localStorage.getItem('odap-rz')==='0')rz=false}catch(_){}
+let rz=true;const rzOpen=new Set(),rzPick={},rzMark={};try{if(localStorage.getItem('odap-rz')==='0')rz=false}catch(_){}
 let cur='words',rf='all';
 try{const v=localStorage.getItem('odap-rf');if(RS[v]||v==='all')rf=v}catch(_){}
 function draw(){
@@ -984,6 +1012,8 @@ function draw(){
     if(cur==='grammar'){const cnt=l=>pool.filter(e=>l==='all'||e.lv===l).length;if(lf!=='all'&&!LVS().includes(lf))lf='all';
       rfEl.innerHTML+='<span class="rfsep" aria-hidden="true"></span>'+[['all','모든 급수'],...LVS().map(l=>[l,l])].map(([k,l])=>`<button type="button" class="rfb" data-lf="${k}" aria-pressed="${lf===k}">${l}<b>${cnt(k)}</b></button>`).join('');
       if(lf!=='all')pool=pool.filter(e=>e.lv===lf)}}else rfEl.hidden=true;
+  /* 거르기는 접어 두고 고른 것만 한 줄로 — 「거르기」를 누르면 펼쳐져요 */
+  if(!rfEl.hidden){rfEl.classList.toggle('fold',!rfOpen);rfEl.insertAdjacentHTML('beforeend',`<button type="button" class="rfb rft" data-rft aria-expanded="${rfOpen}">${rfOpen?'거르기 접기 ▴':'거르기 ▾'}</button>`)}
   if(sv&&(cur==='words'||cur==='grammar')){const s=svParts(cur);pool=[...s.due,...s.fresh,...s.again];rfEl.hidden=true}
   /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
   const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort(sv?()=>0:mf==='wrong'&&cur!=='mistakes'?(a,b)=>(ST.wrong[b[0].id]||0)-(ST.wrong[a[0].id]||0):cur==='grammar'&&bf==='book'?(a,b)=>(a[0].bi||1e6)-(b[0].bi||1e6):(a,b)=>b[0].d.localeCompare(a[0].d)||(a[0].bi&&b[0].bi?a[0].bi-b[0].bi:b[1]-a[1])).map(x=>x[0]);
@@ -1003,8 +1033,10 @@ document.addEventListener('click',e=>{
   if(qzClick(e))return;
   const mb=e.target.closest('[data-mem]');if(mb){memToggle(mb.dataset.mem);return}
   const mfb=e.target.closest('[data-mf]');if(mfb){mf=mfb.dataset.mf;try{localStorage.setItem('odap-mf',mf)}catch(_){}draw();return}
-  const rzb=e.target.closest('[data-rz]');if(rzb){rz=!rz;rzOpen.clear();for(const k in rzPick)delete rzPick[k];try{localStorage.setItem('odap-rz',rz?'1':'0')}catch(_){}draw();return}
+  const rzb=e.target.closest('[data-rz]');if(rzb){rz=!rz;rzOpen.clear();for(const k in rzPick)delete rzPick[k];for(const k in rzMark)delete rzMark[k];try{localStorage.setItem('odap-rz',rz?'1':'0')}catch(_){}draw();return}
+  const rzm=e.target.closest('[data-rzm]');if(rzm){const [id,j]=rzm.dataset.rzm.split(':');const a=rzMark[id]=rzMark[id]||[];a[+j]=MK[(MK.indexOf(a[+j]||'')+1)%4];rzm.textContent=a[+j]||'표시';rzm.classList.toggle('on',!!a[+j]);return}
   const rzo=e.target.closest('[data-rzopen],[data-rzpick]');if(rzo){let id=rzo.dataset.rzopen;if(!id){const [i,n]=rzo.dataset.rzpick.split(':');id=i;rzPick[id]=+n;const me=byId[id]&&byId[id][1];if(me){(ST.mh[id]=ST.mh[id]||[]).push([DAY(),ansOf(me)===+n?1:0]);ST.mh[id]=ST.mh[id].slice(-6);stSave();if(isGrad(me))toast('두 번 연속 맞혔어요 — ‘졸업’으로 옮겼어요.',4000)}}rzOpen.add(id);const y=window.scrollY;draw();window.scrollTo(0,y);return}
+  if(e.target.closest('[data-rft]')){rfOpen=!rfOpen;try{localStorage.setItem('odap-rfo',rfOpen?'1':'0')}catch(_){}draw();return}
   const ufb=e.target.closest('[data-uf]');if(ufb){uf=ufb.dataset.uf;try{localStorage.setItem('odap-uf',uf)}catch(_){}draw();return}
   if(e.target.closest('[data-svgo]')){sv=true;fc=true;fids[cur]=null;draw();window.scrollTo(0,0);return}
   const svr=e.target.closest('[data-svr]');if(svr){svRate(svr.dataset.svr==='1');return}
@@ -1171,22 +1203,28 @@ function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';if(QZ.ki
   <div class="qf-act"><button type="button" class="qnext" data-qstart ${tot?'':'disabled'}>시작 ▶</button></div>`;qzEl.scrollTop=0}
 function qzShow(){const q=QZ.qs[QZ.i];QZ.done=false;qzP.textContent=`${QZ.i+1} / ${QZ.qs.length}`;qzBar.style.width=(QZ.i/QZ.qs.length*100)+'%';
   qzBody.innerHTML=`<p class="qz-tag">${q.label}</p><p class="qz-inst"${q.instJa?' lang="ja"':''}>${q.inst}</p><div class="qz-stem" lang="ja">${q.stem}</div>
-  <ol class="qz-opts">${q.opts.map((o,i)=>`<li><button type="button" class="qo" data-qa="${i}"><span class="qn">${i+1}</span><span${q.optJa?' lang="ja"':''}>${o.h}</span></button></li>`).join('')}</ol><div id="qz-fb"></div>`;qzEl.scrollTop=0}
-/* 문법 문제 보기 풀이: 보기마다 어느 문법이고 무슨 뜻인지, 고른 답이 왜 안 맞는지 */
-function qOptWhy(q,e,i){if(q.kind!=='g')return '';const blank=q.type==='gblank';
-  const src=t=>{const c=D.grammar.filter(o=>o.id!==e.id&&!o.ref);const hit=o=>blank?((o.ex||[]).some(x=>x[2]&&esc(x[2])===t)||(()=>{const g=gFind(o);return g&&esc(g.text)===t})()):esc(shortM(o.m))===t;
-    return c.find(o=>(o.grp||'')===(e.grp||'')&&hit(o))||c.find(hit)||null};
-  const rows=q.opts.map((o,j)=>{const g=o.ok?e:src(o.h);const tag=o.ok?'<b class="ow o">정답</b>':j===i?'<b class="ow x">내가 고른 답</b>':'';
-    return `<li class="${o.ok?'ok':j===i?'ng':''}"><span class="on">${j+1}</span><div><span lang="${blank?'ja':'ko'}" class="ot">${o.h}</span>${tag}${g?`<span class="og"><span lang="ja">${rb(g.p.split('／')[0])}</span> — ${esc(blank?g.m:shortM(g.m))}</span>`:''}</div></li>`}).join('');
-  const mine=q.opts[i],mg=mine.ok?null:src(mine.h);
+  <p class="qmh">답을 고르기 전에 오른쪽 칸을 눌러 보기마다 ○ ✕ △ 표시를 해 둘 수 있어요.</p><ol class="qz-opts">${q.opts.map((o,i)=>`<li class="qrow"><button type="button" class="qo" data-qa="${i}"><span class="qn">${i+1}</span><span${q.optJa?' lang="ja"':''}>${o.h}</span></button><button type="button" class="qm${(q.marks||[])[i]?' on':''}" data-qm="${i}" aria-label="${i+1}번 보기에 표시">${(q.marks||[])[i]||'표시'}</button></li>`).join('')}</ol><div id="qz-fb"></div>`;qzEl.scrollTop=0}
+/* 보기 풀이: 보기마다 무슨 뜻인지 + 내가 단 ○ ✕ △ 표시가 맞았는지 */
+const MK=['','○','✕','△'];
+function mkVerdict(m,truth){if(!m)return'';if(m==='△')return `<b class="mv bad">내 표시 △ 헷갈림 → 실제로는 ${truth?'정답':'✕'}</b>`;const right=(m==='○')===truth;return right?`<b class="mv good">내 표시 ${m} 맞게 봄</b>`:`<b class="mv bad">내 표시 ${m} → 실제로는 ${truth?'정답':'✕'}</b>`}
+function qOptWhy(q,e,i){const mk=q.marks||[],any=mk.some(Boolean),isG=q.kind==='g',isW=q.kind==='w';if(!isG&&!isW&&!any)return'';const blank=q.type==='gblank';
+  const src=t=>{if(isG){const c=D.grammar.filter(o=>o.id!==e.id&&!o.ref);const hit=o=>blank?((o.ex||[]).some(x=>x[2]&&esc(x[2])===t)||(()=>{const g=gFind(o);return g&&esc(g.text)===t})()):esc(shortM(o.m))===t;return c.find(o=>(o.grp||'')===(e.grp||'')&&hit(o))||c.find(hit)||null}
+    if(isW){const plainT=t.replace(/<[^>]+>/g,'');return D.words.find(o=>o.id!==e.id&&(esc(base(hwOf(o)))===plainT||esc(shortM(o.m))===plainT))||null}return null};
+  const info=g=>!g?'':isG?`<span class="og"><span lang="ja">${rb(g.p.split('／')[0])}</span> — ${esc(blank?g.m:shortM(g.m))}</span>`:`<span class="og"><span lang="ja">${rb(hwOf(g))}</span> — ${esc(shortM(g.m))}</span>`;
+  const rows=q.opts.map((o,j)=>{const g=o.ok?(e||null):src(o.h);const tag=o.ok?'<b class="ow o">정답</b>':j===i?'<b class="ow x">내가 고른 답</b>':'';
+    return `<li class="${o.ok?'ok':j===i?'ng':''}"><span class="on">${j+1}</span><div><span lang="${q.optJa?'ja':'ko'}" class="ot">${o.h}</span>${tag}${mkVerdict(mk[j],o.ok)}${e?info(g):''}</div></li>`}).join('');
+  const mine=q.opts[i],mg=isG&&!mine.ok?src(mine.h):null;
   const why=mg&&blank?`<p class="owy">이 문장은 「${esc(shortM(e.m))}」의 뜻이어야 자연스러워요. 고른 <b lang="ja">${mine.h}</b>는 「${esc(shortM(mg.m))}」라는 뜻이라 문장과 맞지 않아요.</p>`:mg?`<p class="owy">고른 뜻 「${mine.h}」는 <b lang="ja">${rb(mg.p.split('／')[0])}</b>의 뜻이에요.</p>`:'';
-  return `<div class="ob"><h4>보기 풀이</h4>${why}<ol>${rows}</ol></div>`}
+  const badN=q.opts.filter((o,j)=>mk[j]&&(mk[j]==='△'||(mk[j]==='○')!==o.ok)).length;
+  const mline=any?`<p class="owy mkl ${badN?'bad':'good'}">${badN?`${mine.ok?'맞혔지만 ':''}표시한 보기 중 ${badN}개는 잘못 봤거나 헷갈렸어요. 아래에서 확인해 보세요.`:'표시한 보기를 모두 맞게 봤어요.'}</p>`:'';
+  return `<div class="ob"><h4>보기 풀이</h4>${mline}${why}<ol>${rows}</ol></div>`}
 function qzAnswer(i){if(QZ.done)return;QZ.done=true;const q=QZ.qs[QZ.i],ok=q.opts[i].ok,ai=q.opts.findIndex(o=>o.ok)+1;
   qzBody.querySelectorAll('.qo').forEach((b,j)=>{b.disabled=true;if(q.opts[j].ok)b.classList.add('ans');else if(j===i)b.classList.add('ng')});
   if(ok)QZ.ok++;else{QZ.wrong.push(q.id);ST.wrong[q.id]=(ST.wrong[q.id]||0)+1;if(!stLive)stOps.push(['w',q.id]);stSave()}
   if(q.kind==='d'){const e=q.src,gid=GBNO.get(String(e.gram||'')),g=gid&&byId[gid]?byId[gid][1]:null;
     document.getElementById('qz-fb').innerHTML=`<div class="qf ${ok?'ok':'ng'}">${ok?'○ 정답이에요':`✕ 아쉬워요 · 정답은 ${ai}번`}</div>
     <div class="qf-ex" lang="ja">${rb(q.full)}${spk(q.full)}</div>
+    ${qOptWhy(q,null,i)}
     ${g?`<p class="qf-m"><b lang="ja">${rb(g.p)}</b><span>${esc(g.m)}</span></p>`:''}
     <p class="gsrc">${esc(e.set||'')} · ${esc(e.section||'')} ${e.no}번${e.book_page?` · p.${esc(e.book_page)}`:''}${e.gram?` · 문법 ${esc(e.gram)}`:''}</p>
     <div class="qf-act">${g?`<button type="button" class="chip" data-go="${gid}">문법 카드 보기</button>`:''}<button type="button" class="qnext" data-qnext>${QZ.i+1<QZ.qs.length?'다음 문제 ▶':'결과 보기 ▶'}</button></div>`;
@@ -1206,6 +1244,7 @@ function qzSync(){const b=qzBody&&qzBody.querySelector('.qf-act .memb');if(b){co
 function qzOpen(){qzEl.hidden=false;document.documentElement.classList.add('qz-open');stopSay();qzSetup();try{qzEl.querySelector('[data-qx]').focus({preventScroll:true})}catch(_){}}
 function qzClose(){if(qzEl.hidden)return;qzEl.hidden=true;document.documentElement.classList.remove('qz-open');stopSay();draw()}
 function qzClick(e){const t=e.target;let b;
+  if((b=t.closest('[data-qm]'))){if(QZ.done)return true;const q=QZ.qs[QZ.i],j=+b.dataset.qm;q.marks=q.marks||[];q.marks[j]=MK[(MK.indexOf(q.marks[j]||'')+1)%4];b.textContent=q.marks[j]||'표시';b.classList.toggle('on',!!q.marks[j]);return true}
   if(t.closest('[data-qopen]')){qzOpen();return true}
   if(qzEl.hidden)return false;
   if(t.closest('[data-qx]')){qzClose();return true}
