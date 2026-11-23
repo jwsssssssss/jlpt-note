@@ -214,6 +214,10 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .rzb{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 16px;min-height:40px;cursor:pointer;margin-top:6px}
 .rzr{font-size:14px;font-weight:700;margin:0 0 6px;padding:5px 10px;border-radius:8px}.rzr.ok{color:var(--ok);background:var(--okbg)}.rzr.ng{color:var(--red);background:var(--redbg)}
 .rzt{margin-left:auto}
+.gtg{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:12px;color:var(--sub)}.gtg[hidden]{display:none}
+.gh #list .gq:not(.on),.gh #list .ex .hl:not(.on){filter:blur(9px);cursor:pointer;user-select:none}.gh #list .ex .hl{display:inline-block}.gh #list .gq:not(.on) *{pointer-events:none}
+.focus .gtg{margin:4px var(--mi,14px) 4px}
+@media(max-width:600px){.gtg{margin-left:var(--mi,14px);margin-right:var(--mi,14px)}}
 </style>
 </head>
 <body>
@@ -256,6 +260,7 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 <main>
   <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘설정’에서 좌우 여백(바깥 · 카드 안)과 화면 밝기를 바꿀 수 있어요. ‘가− 가＋’는 글자 크기를 5%씩 바꾸고, 가운데 숫자를 누르면 크기를 바로 골라요. ↶ ↷ 는 ‘외웠어요’ 누른 것을 20번까지 되돌리거나 다시 실행해요.</p></details>
   <div class="rf" id="rf" hidden></div>
+  <div class="gtg" id="gtg" hidden><button type="button" class="rfb" id="ghb" aria-pressed="false">문법 가리기</button><span id="ght"></span></div>
   <div class="list" id="list"></div>
 </main>
 <footer id="foot"></footer>
@@ -807,6 +812,8 @@ const hlMark=(s,hl)=>{s=String(s);if(!hl)return rb(s);const toks=s.match(/\{[^|{
   for(const pc of String(hl).split('…').filter(Boolean)){const i=B.indexOf(pc,from);if(i<0)continue;st[own[i]]|=1;st[own[i+pc.length-1]]|=2;from=i+pc.length}
   return rb(toks.map((t,i)=>(st[i]&1?'\u0001':'')+t+(st[i]&2?'\u0002':'')).join('')).replace(/\u0001/g,'<b class="hl">').replace(/\u0002/g,'</b>')};
 const hlEx=e=>(e.ex||[]).map((x,xi)=>{const h=x[2];if(!h||h.includes('…')||h.length<2)return null;const b=base(x[0]),i=b.indexOf(h);return i>=0&&h.length<b.length-1?[xi,i,i+h.length]:null}).filter(Boolean);
+/* 문법 가리기용: 책의 빨간 부분이 없는 예문은 문형이 들어간 자리를 찾아 표시해요 */
+const gEx=e=>{let al=null;return (e.ex||[]).map(x=>{if(x[2])return x;if(!al)al=gAlts(e.p).filter(a=>!/[〜～]/.test(a)&&a.length>=2).sort((a,b)=>b.length-a.length);const b=base(x[0]),a=al.find(a=>b.includes(a));return a?[x[0],x[1],a]:x})};
 const exs=a=>a&&a.length?`<ul class="ex">${a.map(x=>`<li><div class="j" lang="ja">${hlMark(x[0],x[2])}${spk(x[0])}</div><div class="k hid mn">${esc(x[1])}</div></li>`).join('')}</ul>`:'';
 const rels=a=>a&&a.length?`<div class="rel">${a.filter(i=>byId[i]).map(i=>`<button class="chip" data-go="${i}">${['단어','문법','한자','문제'][Object.keys(views).indexOf(byId[i][0])]} · <span lang="ja">${esc(label(i))}</span></button>`).join('')}</div>`:'';
 const note=n=>n?`<div class="note">${rb(n)}</div>`:'';
@@ -844,7 +851,7 @@ const fillHTML=e=>{const h=rb(e.q).replace(/\n/g,'<br>');return isOrd(e)?h.repla
 const gmiss=e=>e.miss&&e.miss.length?`<p class="miss">모르던 말 ${e.miss.map(m=>{const [t,id,mm]=Array.isArray(m)?m:[m,null,null];const mean=mm||(id&&byId[id]?shortM(byId[id][1].m):'');const inner=`<span lang="ja">${rb(t)}</span>${mean?`<span class="mm hid mn" lang="ko">${esc(mean)}</span>`:''}`;return id&&byId[id]?`<button type="button" class="mi" data-go="${id}">${inner}</button>`:`<b>${inner}</b>`}).join('')}</p>`:'';
 const R={
  words:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head" lang="ja">${rb(e.w)}</h2>${spk(e.w,1)}<span class="date">${e.d}</span>${memBtn(e.id)}</div><p class="mean hid mn">${esc(e.m)}</p>${exs(e.ex)}${note(e.note)}${rels(e.rel)}</article>`,
- grammar:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head${base(e.p).length>18?' long':''}" lang="ja">${e.bno&&e.p.includes('／')?e.p.split('／').map(rb).join('<br>'):rb(e.p)}</h2><span class="lv">${esc(e.lv)}</span><span class="date">${e.d}</span>${memBtn(e.id)}</div>${e.src?`<p class="gsrc">${esc(e.src)}</p>`:''}<p class="mean hid mn">${esc(e.m)}</p>${e.c?`<p class="conn">접속: ${rb(e.c)}</p>`:''}${exs(e.ex)}${note(e.note)}${gmiss(e)}${rels(e.rel)}</article>`,
+ grammar:e=>`<article class="card" id="${e.id}"><div class="top"><h2 class="head gq${base(e.p).length>18?' long':''}" lang="ja">${e.bno&&e.p.includes('／')?e.p.split('／').map(rb).join('<br>'):rb(e.p)}</h2><span class="lv">${esc(e.lv)}</span><span class="date">${e.d}</span>${memBtn(e.id)}</div>${e.src?`<p class="gsrc">${esc(e.src)}</p>`:''}<p class="mean hid mn">${esc(e.m)}</p>${e.c?`<p class="conn gq">접속: ${rb(e.c)}</p>`:''}${exs(gEx(e))}${note(e.note).replace('class="note"','class="note gq"')}${gmiss(e)}${rels(e.rel)}</article>`,
  kanji:e=>`<article class="card kcard" id="${e.id}"><div class="cell kj" data-kw="${esc(e.k)}" title="한자 풀이"><span>${esc(e.k)}</span></div><dl class="kinfo"><dt>한국</dt><dd style="font-size:17px"><b>${esc((KJ[e.k]||{}).ko||'')}</b>${(KJ[e.k]||{}).old?` <span lang="ja" style="color:var(--sub)">(${KJ[e.k].old})</span>`:''}</dd><dt>음독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.on)}</dd><dt>훈독</dt><dd class="ja hid rd" style="font-size:19px">${esc(e.kun)}</dd><dt>획수</dt><dd>${e.s}획</dd><dt>부수</dt><dd lang="ja">${esc(e.r)}${KJ[e.k]&&KJ[e.k].rn?` <span lang="ko" style="color:var(--sub)">· ${esc(KJ[e.k].rv&&String(e.r).startsWith(KJ[e.k].rv)?KJ[e.k].rvn:KJ[e.k].rn)}</span>`:''}</dd></dl><div class="words">${e.w.map(w=>`<div><span class="ja">${rb(w[0])}</span>${spk(w[0])} <span class="hid mn">${esc(w[1])}</span></div>`).join('')}</div><div class="note" style="grid-column:1/-1;margin-top:0">${rb(e.tip)}</div></article>`,
  mistakes:e=>{const s=st(e),A=ansOf(e),M=mineOf(e),ord=isOrd(e);
   const top=`<div class="top"><span class="rs ${s}">${RS[s]}</span><span class="src">${esc(e.src)}</span>${e.warn?`<span class="warn">${esc(e.warn)}</span>`:''}<span class="date">${e.d}</span></div>`;
@@ -890,6 +897,7 @@ function draw(){
   /* 최신순: 날짜가 늦은 것 먼저, 날짜가 같으면 나중에 넣은 것(배열 뒤쪽) 먼저 */
   const items=pool.map((e,i)=>[e,i]).filter(([e])=>!q||plain(JSON.stringify(e)).toLowerCase().includes(q)).sort(cur==='grammar'&&bf==='book'?(a,b)=>(a[0].bi||1e6)-(b[0].bi||1e6):(a,b)=>b[0].d.localeCompare(a[0].d)||(a[0].bi&&b[0].bi?a[0].bi-b[0].bi:b[1]-a[1])).map(x=>x[0]);
   list.innerHTML=items.length?items.map(R[cur]).join(''):`<p class="empty">${q?'검색 결과가 없어요.':cur==='mistakes'&&rf!=='all'?'이 표시의 문제는 아직 없어요.':(cur==='words'||cur==='grammar')&&mf==='todo'?'모두 외웠어요. 퀴즈 ▶로 확인해 보세요.':(cur==='words'||cur==='grammar')&&mf==='mem'?'아직 외운 것이 없어요.':'아직 비어 있어요.'}</p>`;
+  try{ghApply()}catch(_){}
   try{focusApply()}catch(_){}
   shift();
 }
@@ -1122,6 +1130,12 @@ function mgDef(k){const r=document.documentElement,old=r.style.getPropertyValue(
 function mgApply(){const r=document.documentElement;for(const k in MG){if(MG[k]===null)r.style.removeProperty('--'+k);else r.style.setProperty('--'+k,MG[k]+'px');document.getElementById(k+'v').textContent=MG[k]===null?'기본':MG[k];try{MG[k]===null?localStorage.removeItem('odap-'+k):localStorage.setItem('odap-'+k,MG[k])}catch(_){}}}
 document.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>{const [k,d]=b.dataset.mg.split(':');const cur0=MG[k]===null?Math.round(mgDef(k)/2)*2:MG[k];MG[k]=Math.max(0,Math.min(80,cur0+(+d)));mgApply()});
 document.getElementById('mgr').onclick=()=>{MG.mo=MG.mi=null;mgApply()};mgApply();
+/* 문법 가리기: 문형 · 예문의 문법 부분 · 설명을 흐리게 — 뜻과 예문만 보고 맞혀 본 뒤 눌러서 확인 */
+let gh=false;try{gh=localStorage.getItem('odap-gh')==='1'}catch(_){}
+function ghApply(){const g=document.getElementById('gtg');g.hidden=cur!=='grammar';document.body.classList.toggle('gh',gh&&cur==='grammar');document.getElementById('ghb').setAttribute('aria-pressed',gh);document.getElementById('ghb').textContent=gh?'문법 가리는 중 · 끄기':'문법 가리기';document.getElementById('ght').textContent=gh?'흐린 곳을 누르면 보여요':''}
+document.getElementById('ghb').onclick=()=>{gh=!gh;try{localStorage.setItem('odap-gh',gh?'1':'0')}catch(_){}list.querySelectorAll('.gq.on,.hl.on').forEach(x=>x.classList.remove('on'));ghApply()};
+list.addEventListener('click',e=>{if(!gh||cur!=='grammar')return;const t=e.target.closest('.gq,.ex .hl');if(!t||e.target.closest('.sp,button'))return;const li=t.closest('li');(t.classList.contains('hl')&&li?li.querySelectorAll('.hl'):[t]).forEach(x=>x.classList.toggle('on'));e.stopPropagation()},true);
+ghApply();
 /* 화면 밝기: 자동(기기 설정) · 밝게 · 어둡게 */
 let th='auto';try{const v=localStorage.getItem('odap-th');if(v==='light'||v==='dark')th=v}catch(_){}
 function thApply(){const r=document.documentElement;if(th==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',th);document.querySelectorAll('[data-th]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===th));
