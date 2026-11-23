@@ -12,9 +12,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="JLPT 노트">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#121317" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#181817" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Kaku+Gothic+New:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Kaku+Gothic+New:wght@400;700&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <!-- ① 디자인 (색·글꼴·레이아웃) -->
 <style>
 /* VOICE: 차분한 개인 공부 노트, 군더더기 없이 바로 찾고 바로 확인
@@ -23,15 +23,17 @@
    COLOUR and TYPE: 흰 종이 + 먹색 글씨 + 朱色 포인트, 藍色 보조 / Klee One(표제어), Zen Kaku Gothic(일본어), Noto Sans KR(한국어)
    LAYOUT: 상단 제목 → 고정 탭·검색 → 카드 1열(넓으면 2열) */
 :root{color-scheme:light dark;
- --bg:light-dark(#ffffff,#121317);--paper:light-dark(#f6f6f4,#1b1c21);--ink:light-dark(#1b1b1f,#ececec);--sub:light-dark(#5d6168,#a3a7ae);
- --line:light-dark(#e3e3e0,#2c2e35);--red:light-dark(#c8231b,#ff6e61);--redbg:light-dark(#fdecea,#3a1c1a);--ai:light-dark(#26408b,#8ea8ff);--aibg:light-dark(#eaf0fd,#1d2440);--ok:light-dark(#1a7f37,#5fd47f);--okbg:light-dark(#e8f5ec,#16301f);--warn:light-dark(#9a5b00,#ffc266);--warnbg:light-dark(#fff4e0,#3a2a12)}
+ --bg:light-dark(#ffffff,#181817);--paper:light-dark(#f3f1ec,#222220);--gut:light-dark(#efece5,#0f0f0e);--ink:light-dark(#232220,#eeece8);--sub:light-dark(#77756f,#a09e98);
+ --line:light-dark(#e6e4df,#34332f);--red:light-dark(#e8590c,#ff8a4c);--redbg:light-dark(#fdebdd,#3a271b);--ai:light-dark(#26408b,#8ea8ff);--aibg:light-dark(#eaf0fd,#1d2440);--ok:light-dark(#2f9e44,#5fd47f);--okbg:light-dark(#e8f5ec,#16301f);--warn:light-dark(#9a5b00,#ffc266);--warnbg:light-dark(#fff4e0,#3a2a12)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo",sans-serif;overflow-x:clip}
+html{background:var(--gut)}
+body{margin:0 auto;max-width:980px;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;overflow-x:clip;word-break:keep-all;overflow-wrap:break-word;box-shadow:0 0 0 1px var(--line)}
+[lang=ja]{word-break:normal}
 [lang=ja],.ja{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif}
 .kj{font-family:"Klee One","Yu Kyokasho","Hiragino Mincho ProN","Noto Serif JP",serif;font-weight:600}
 header{padding:28px max(5vw,16px) 14px;max-width:980px;margin:0 auto}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+h1{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-.01em;line-height:1.15;margin:0 0 6px;text-wrap:balance}
 h1 .stamp{display:inline-block;color:var(--red);border:2.5px solid var(--red);border-radius:6px;font-size:.5em;padding:2px 7px;vertical-align:middle;margin-left:8px;transform:rotate(-6deg)}
 .lead{color:var(--sub);margin:0;font-size:15px}
 .hub{display:inline-block;font-size:13px;color:var(--sub);text-decoration:none;line-height:32px;min-height:32px;margin:-6px 0 4px}.hub[hidden]{display:none}
@@ -49,7 +51,7 @@ h1 .stamp{display:inline-block;color:var(--red);border:2.5px solid var(--red);bo
 main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
 .hint{font-size:13px;color:var(--sub);margin:0 0 12px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:14px;padding:14px 16px 16px;background:var(--bg);scroll-margin-top:140px;transition:box-shadow .4s}
+.card{border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;background:var(--bg);scroll-margin-top:140px;transition:box-shadow .4s}
 .card.flash{box-shadow:0 0 0 3px var(--red)}
 .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .head{font-size:26px;line-height:1.9;margin:0}.head.long{font-size:20px;line-height:1.8}
@@ -195,7 +197,7 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
 .zs{display:flex;align-items:center;gap:4px;margin-left:auto}.zs output{font-size:12px;color:var(--sub);min-width:38px;text-align:center}
 .setrow{display:flex;gap:4px 8px;flex-wrap:wrap;align-items:center;margin-top:4px}.setrow[hidden]{display:none}
 details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-content}details.hint p{margin:2px 0 0}
-#fnav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;gap:8px;align-items:center;justify-content:center;padding:8px max(5vw,16px) calc(8px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}#fnav[hidden]{display:none}
+#fnav{position:fixed;left:50%;transform:translateX(-50%);width:min(100%,980px);bottom:0;z-index:6;display:flex;gap:8px;align-items:center;justify-content:center;padding:8px max(5vw,16px) calc(8px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}#fnav[hidden]{display:none}
 #fnav button{flex:1 1 0;max-width:260px;font:inherit;font-size:16px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;min-height:50px;cursor:pointer}#fnav button:disabled{opacity:.35}
 #fnav output{flex:none;min-width:84px;text-align:center;font-size:14px;color:var(--sub)}
 .focus header,.focus .hint,.focus footer,.focus .rf{display:none}
@@ -238,7 +240,7 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 </div></div>
 
 <main>
-  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 바꿔요.</p></details>
+  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 5%씩 바꿔요.</p></details>
   <div class="rf" id="rf" hidden></div>
   <div class="list" id="list"></div>
 </main>
@@ -1073,9 +1075,9 @@ document.addEventListener('keydown',e=>{if(qzEl.hidden||!sh.hidden||e.altKey||e.
   if(/^[1-4]$/.test(e.key)){const b=qzBody.querySelector(`.qo[data-qa="${+e.key-1}"]`);if(b&&!b.disabled){b.click();e.preventDefault()}}});
 
 /* ── 글자 크기 (가− 가＋) · 집중 보기 (한 장씩) ── */
-const ZS=[0.85,1,1.15,1.3,1.5,1.75];let zi=1;try{const v=localStorage.getItem('odap-z');if(v!==null&&ZS[+v])zi=+v}catch(_){}
+const ZS=Array.from({length:25},(_,k)=>(80+k*5)/100);let zi=4;try{const v=+localStorage.getItem('odap-zp');const k=ZS.findIndex(z=>Math.round(z*100)===v);if(k>=0)zi=k;else{const o=localStorage.getItem('odap-z');if(o!==null){const k2=ZS.findIndex(z=>Math.round(z*100)===[85,100,115,130,150,175][+o]);if(k2>=0)zi=k2}}}catch(_){}
 const zm=document.getElementById('zm'),zp=document.getElementById('zp'),zv=document.getElementById('zv'),fbtn=document.getElementById('fbtn'),fnav=document.getElementById('fnav'),fprev=document.getElementById('fprev'),fnext=document.getElementById('fnext'),fpos=document.getElementById('fpos'),setb=document.getElementById('setb'),setrow=document.getElementById('setrow');
-function zApply(){document.documentElement.style.setProperty('--z',ZS[zi]);zv.textContent=Math.round(ZS[zi]*100)+'%';zm.disabled=zi===0;zp.disabled=zi===ZS.length-1;try{localStorage.setItem('odap-z',zi)}catch(_){}}
+function zApply(){document.documentElement.style.setProperty('--z',ZS[zi]);zv.textContent=Math.round(ZS[zi]*100)+'%';zm.disabled=zi===0;zp.disabled=zi===ZS.length-1;try{localStorage.setItem('odap-zp',Math.round(ZS[zi]*100))}catch(_){}}
 zm.onclick=()=>{if(zi>0){zi--;zApply()}};zp.onclick=()=>{if(zi<ZS.length-1){zi++;zApply()}};zApply();
 let fc=false,fids={},fi=0;try{fc=localStorage.getItem('odap-fc')==='1';fids=JSON.parse(localStorage.getItem('odap-fid')||'{}')||{}}catch(_){}
 function focusApply(){document.body.classList.toggle('focus',fc);fbtn.setAttribute('aria-pressed',fc);const cs=[...list.querySelectorAll('.card')];fnav.hidden=!fc||!cs.length;if(!fc||!cs.length)return;
