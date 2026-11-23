@@ -205,6 +205,8 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .focus .list .card{display:none;border:0;padding:6px 0 0}.focus .list .card.cur{display:block}
 .focus #toast{bottom:84px}
 @media(max-width:600px){header{padding:14px 16px 6px}h1{font-size:24px}.lead{display:none}}
+/* 폰: 카드 네모 테두리를 없애고 화면 폭을 다 써요 (카드 사이는 옅은 띠) */
+@media(max-width:600px){main{padding:12px 0 60px}.hint,.rf{margin-left:14px;margin-right:14px}.list{gap:0}.card{border:0;border-radius:0;border-bottom:8px solid var(--paper);padding:14px 14px 18px}.card.flash{box-shadow:inset 0 0 0 3px var(--red)}.focus .list .card{padding:6px 14px 0;border-bottom:0}.empty{padding:0 14px}}
 .rzo{grid-template-columns:1fr;gap:6px}.rzp{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px 12px;min-height:44px;cursor:pointer}
 @media(hover:hover){.rzp:hover{border-color:var(--ink)}}
 .rzb{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 16px;min-height:40px;cursor:pointer;margin-top:6px}
