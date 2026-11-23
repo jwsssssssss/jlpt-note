@@ -218,6 +218,11 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 .gh #list .gq:not(.on),.gh #list .ex .hl:not(.on){filter:blur(9px);cursor:pointer;user-select:none}.gh #list .ex .hl{display:inline-block}.gh #list .gq:not(.on) *{pointer-events:none}
 .focus .gtg{margin:4px var(--mi,14px) 4px}
 @media(max-width:600px){.gtg{margin-left:var(--mi,14px);margin-right:var(--mi,14px)}}
+.ob{margin:12px 0 4px;border-top:1px solid var(--line);padding-top:8px}.ob h4{margin:0 0 6px;font-size:14px}.ob ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ob li{display:flex;gap:8px;align-items:flex-start;padding:6px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px}.ob li.ok{border-color:var(--ok);background:var(--okbg)}.ob li.ng{border-color:var(--red);background:var(--redbg)}
+.ob .on{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--sub);display:inline-flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
+.ob .ot{font-weight:700;font-size:15px}.ob .ow{font-size:11px;margin-left:6px;padding:1px 6px;border-radius:6px}.ob .ow.o{color:var(--ok)}.ob .ow.x{color:var(--red)}
+.ob .og{display:block;color:var(--sub);font-size:13px;line-height:1.5;margin-top:2px}.owy{font-size:14px;margin:0 0 8px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -1073,6 +1078,15 @@ function qzSetup(){if(QZ.lv!=='all'&&!LVS().includes(QZ.lv))QZ.lv='all';if(QZ.ki
 function qzShow(){const q=QZ.qs[QZ.i];QZ.done=false;qzP.textContent=`${QZ.i+1} / ${QZ.qs.length}`;qzBar.style.width=(QZ.i/QZ.qs.length*100)+'%';
   qzBody.innerHTML=`<p class="qz-tag">${q.label}</p><p class="qz-inst"${q.instJa?' lang="ja"':''}>${q.inst}</p><div class="qz-stem" lang="ja">${q.stem}</div>
   <ol class="qz-opts">${q.opts.map((o,i)=>`<li><button type="button" class="qo" data-qa="${i}"><span class="qn">${i+1}</span><span${q.optJa?' lang="ja"':''}>${o.h}</span></button></li>`).join('')}</ol><div id="qz-fb"></div>`;qzEl.scrollTop=0}
+/* 문법 문제 보기 풀이: 보기마다 어느 문법이고 무슨 뜻인지, 고른 답이 왜 안 맞는지 */
+function qOptWhy(q,e,i){if(q.kind!=='g')return '';const blank=q.type==='gblank';
+  const src=t=>{const c=D.grammar.filter(o=>o.id!==e.id&&!o.ref);const hit=o=>blank?((o.ex||[]).some(x=>x[2]&&esc(x[2])===t)||(()=>{const g=gFind(o);return g&&esc(g.text)===t})()):esc(shortM(o.m))===t;
+    return c.find(o=>(o.grp||'')===(e.grp||'')&&hit(o))||c.find(hit)||null};
+  const rows=q.opts.map((o,j)=>{const g=o.ok?e:src(o.h);const tag=o.ok?'<b class="ow o">정답</b>':j===i?'<b class="ow x">내가 고른 답</b>':'';
+    return `<li class="${o.ok?'ok':j===i?'ng':''}"><span class="on">${j+1}</span><div><span lang="${blank?'ja':'ko'}" class="ot">${o.h}</span>${tag}${g?`<span class="og"><span lang="ja">${rb(g.p.split('／')[0])}</span> — ${esc(blank?g.m:shortM(g.m))}</span>`:''}</div></li>`}).join('');
+  const mine=q.opts[i],mg=mine.ok?null:src(mine.h);
+  const why=mg&&blank?`<p class="owy">이 문장은 「${esc(shortM(e.m))}」의 뜻이어야 자연스러워요. 고른 <b lang="ja">${mine.h}</b>는 「${esc(shortM(mg.m))}」라는 뜻이라 문장과 맞지 않아요.</p>`:mg?`<p class="owy">고른 뜻 「${mine.h}」는 <b lang="ja">${rb(mg.p.split('／')[0])}</b>의 뜻이에요.</p>`:'';
+  return `<div class="ob"><h4>보기 풀이</h4>${why}<ol>${rows}</ol></div>`}
 function qzAnswer(i){if(QZ.done)return;QZ.done=true;const q=QZ.qs[QZ.i],ok=q.opts[i].ok,ai=q.opts.findIndex(o=>o.ok)+1;
   qzBody.querySelectorAll('.qo').forEach((b,j)=>{b.disabled=true;if(q.opts[j].ok)b.classList.add('ans');else if(j===i)b.classList.add('ng')});
   if(ok)QZ.ok++;else{QZ.wrong.push(q.id);ST.wrong[q.id]=(ST.wrong[q.id]||0)+1;if(!stLive)stOps.push(['w',q.id]);stSave()}
@@ -1087,6 +1101,7 @@ function qzAnswer(i){if(QZ.done)return;QZ.done=true;const q=QZ.qs[QZ.i],ok=q.opt
   document.getElementById('qz-fb').innerHTML=`<div class="qf ${ok?'ok':'ng'}">${ok?'○ 정답이에요':`✕ 아쉬워요 · 정답은 ${ai}번`}</div>
   ${ex?`<div class="qf-ex" lang="ja">${rb(ex[0])}${spk(ex[0])}</div><p class="tr">${esc(ex[1])}</p>`:''}
   <p class="qf-m"><b lang="ja">${rb(head)}</b><span>${esc(e.m)}</span></p>
+  ${qOptWhy(q,e,i)}
   <div class="qf-act">${memBtn(q.id)}<button type="button" class="chip" data-go="${q.id}">카드 보기</button><button type="button" class="qnext" data-qnext>${QZ.i+1<QZ.qs.length?'다음 문제 ▶':'결과 보기 ▶'}</button></div>`;
   qzBar.style.width=((QZ.i+1)/QZ.qs.length*100)+'%';const nb=qzBody.querySelector('.qnext');if(nb){try{nb.focus({preventScroll:true})}catch(_){}nb.scrollIntoView({block:'nearest'})}}
 function qzEnd(){const n=QZ.qs.length,pct=n?Math.round(QZ.ok/n*100):0,wr=[...new Set(QZ.wrong)];qzP.textContent='결과';qzBar.style.width='100%';
