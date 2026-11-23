@@ -28,7 +28,7 @@
  --line:light-dark(#e6e4df,#34332f);--red:light-dark(#e8590c,#ff8a4c);--redbg:light-dark(#fdebdd,#3a271b);--ai:light-dark(#26408b,#8ea8ff);--aibg:light-dark(#eaf0fd,#1d2440);--ok:light-dark(#2f9e44,#5fd47f);--okbg:light-dark(#e8f5ec,#16301f);--warn:light-dark(#9a5b00,#ffc266);--warnbg:light-dark(#fff4e0,#3a2a12)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-html{background:var(--gut)}
+html{background:var(--gut);overflow-x:clip}
 body{margin:0 auto;max-width:980px;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;overflow-x:clip;word-break:keep-all;overflow-wrap:break-word;box-shadow:0 0 0 1px var(--line)}
 [lang=ja]{word-break:normal}
 [lang=ja],.ja{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif}
@@ -49,10 +49,10 @@ h1 .stamp{display:inline-block;color:var(--red);border:2.5px solid var(--red);bo
 .tools input[type=search]{flex:1 1 200px;font:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);min-height:44px}
 .tg{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--sub);cursor:pointer;min-height:44px;padding:0 4px;user-select:none}
 .tg input{width:18px;height:18px;accent-color:var(--red)}
-main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
+main{max-width:980px;margin:0 auto;padding:16px var(--mo,max(5vw,16px)) 60px}
 .hint{font-size:13px;color:var(--sub);margin:0 0 12px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;background:var(--bg);scroll-margin-top:140px;transition:box-shadow .4s}
+.card{border:1px solid var(--line);border-radius:16px;padding:14px calc(var(--mi,16px) / var(--z,1)) 16px;background:var(--bg);scroll-margin-top:140px;transition:box-shadow .4s}
 .card.flash{box-shadow:0 0 0 3px var(--red)}
 .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .head{font-size:26px;line-height:1.9;margin:0}.head.long{font-size:20px;line-height:1.8}
@@ -61,7 +61,7 @@ main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
 .mean{font-size:16px;margin:2px 0 6px}
 .conn{font-size:14px;color:var(--sub);margin:0 0 6px}
 .ex{list-style:none;padding:0;margin:8px 0 0}
-.ex li{border-left:3px solid var(--line);padding:2px 0 4px 10px;margin-bottom:6px}
+.ex li{border-left:calc(3px / var(--z,1)) solid var(--line);padding:2px 0 4px calc(8px / var(--z,1));margin-bottom:6px}
 .ex .j{font-size:17px;line-height:2.1}.ex .hl{color:var(--red);font-weight:700}
 .ex .k{font-size:14px;color:var(--sub)}
 .note{white-space:pre-line;font-size:14px;background:var(--paper);border-radius:10px;padding:8px 11px;margin-top:10px}
@@ -94,9 +94,9 @@ main{max-width:980px;margin:0 auto;padding:16px max(5vw,16px) 60px}
 .why{margin:6px 0 0;padding-left:18px;font-size:15px}.why li{margin-bottom:3px}
 .key{border-left:4px solid var(--red);background:var(--redbg);padding:6px 11px;margin:8px 0;border-radius:0;font-size:16px;line-height:2}
 .empty{color:var(--sub);text-align:center;padding:40px 0}
-.sp{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;margin:0 0 0 6px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--sub);cursor:pointer;vertical-align:middle;line-height:0;font:inherit;-webkit-tap-highlight-color:transparent}
-.sp svg{width:16px;height:16px;display:block}
-.sp.big{width:38px;height:38px;align-self:center}.sp.big svg{width:19px;height:19px}
+.sp{display:inline-flex;align-items:center;justify-content:center;width:calc(26px / var(--z,1));height:calc(26px / var(--z,1));padding:0;margin:0 0 0 5px;position:relative;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--sub);cursor:pointer;vertical-align:middle;line-height:0;font:inherit;-webkit-tap-highlight-color:transparent}
+.sp svg{width:calc(14px / var(--z,1));height:calc(14px / var(--z,1));display:block}.sp::before{content:"";position:absolute;inset:-8px 0}
+.sp.big{width:calc(32px / var(--z,1));height:calc(32px / var(--z,1));align-self:center}.sp.big svg{width:calc(17px / var(--z,1));height:calc(17px / var(--z,1))}
 .sp.on{color:var(--red);border-color:var(--red);background:var(--redbg)}
 @media(hover:hover){.sp:hover{color:var(--ink);border-color:var(--sub)}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:max-content;max-width:min(92vw,420px);background:var(--ink);color:var(--bg);font-size:14px;line-height:1.5;padding:10px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
@@ -194,7 +194,7 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 16px 40px}
 .ctl{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
 .cb{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:0 13px;min-height:38px;cursor:pointer}
 .cb[aria-pressed=true],.cb[aria-expanded=true]{border-color:var(--ink);background:var(--ink);color:var(--bg);font-weight:700}
-.ths{display:inline-flex;gap:4px;align-items:center}.cb[hidden]{display:none}.cb:disabled{opacity:.35;cursor:default}
+.mg{display:inline-flex;gap:4px;align-items:center;font-size:13px;color:var(--sub)}.mg output{min-width:34px;text-align:center;color:var(--ink)}.mg .cb{min-width:38px;padding:0}.ths{display:inline-flex;gap:4px;align-items:center}.cb[hidden]{display:none}.cb:disabled{opacity:.35;cursor:default}
 .zs{display:flex;align-items:center;gap:4px;margin-left:auto}.zs select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;min-height:38px;padding:0 6px;text-align:center;cursor:pointer}.hb{padding:0 10px;display:inline-flex;align-items:center}
 .setrow{display:flex;gap:4px 8px;flex-wrap:wrap;align-items:center;margin-top:4px}.setrow[hidden]{display:none}
 details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-content}details.hint p{margin:2px 0 0}
@@ -208,7 +208,7 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
 @media(max-width:600px){header{padding:14px 16px 6px}h1{font-size:24px}.lead{display:none}}
 @media(max-width:600px){.ctl{gap:4px}.cb{padding:0 9px;font-size:13px;white-space:nowrap}.zs{gap:2px}.zs select{font-size:12px;padding:0 2px}.hb{padding:0 8px}}
 /* 폰: 카드 네모 테두리를 없애고 화면 폭을 다 써요 (카드 사이는 옅은 띠) */
-@media(max-width:600px){main{padding:12px 0 60px}.hint,.rf{margin-left:14px;margin-right:14px}.list{gap:0}.card{border:0;border-radius:0;border-bottom:8px solid var(--paper);padding:14px 14px 18px}.card.flash{box-shadow:inset 0 0 0 3px var(--red)}.focus .list .card{padding:6px 14px 0;border-bottom:0}.empty{padding:0 14px}}
+@media(max-width:600px){main{padding:12px var(--mo,0px) 60px}.hint,.rf{margin-left:var(--mi,14px);margin-right:var(--mi,14px)}.qz-in{padding-left:max(6px,calc(var(--mo,0px) + var(--mi,14px)));padding-right:max(6px,calc(var(--mo,0px) + var(--mi,14px)))}.list{gap:0}.card{border:0;border-radius:0;border-bottom:8px solid var(--paper);padding:14px calc(var(--mi,14px) / var(--z,1)) 18px}.card.flash{box-shadow:inset 0 0 0 3px var(--red)}.focus .list .card{padding:6px calc(var(--mi,14px) / var(--z,1)) 0;border-bottom:0}.empty{padding:0 14px}}
 .rzo{grid-template-columns:1fr;gap:6px}.rzp{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px 12px;min-height:44px;cursor:pointer}
 @media(hover:hover){.rzp:hover{border-color:var(--ink)}}
 .rzb{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 16px;min-height:40px;cursor:pointer;margin-top:6px}
@@ -246,12 +246,15 @@ details.hint summary{cursor:pointer;min-height:32px;line-height:32px;width:max-c
     <label class="tg"><input type="checkbox" id="showall">읽기 모두 보기</label>
     <label class="tg"><input type="checkbox" id="mask">뜻 가리기</label>
     <label class="tg"><input type="checkbox" id="slow">천천히 읽기</label>
+    <span class="mg" role="group" aria-label="좌우 여백"><span class="mgl">바깥 여백</span><button type="button" class="cb" data-mg="mo:-2" aria-label="바깥 여백 줄이기">−</button><output id="mov">기본</output><button type="button" class="cb" data-mg="mo:2" aria-label="바깥 여백 늘리기">＋</button></span>
+    <span class="mg" role="group" aria-label="카드 안 여백"><span class="mgl">카드 안 여백</span><button type="button" class="cb" data-mg="mi:-2" aria-label="카드 안 여백 줄이기">−</button><output id="miv">기본</output><button type="button" class="cb" data-mg="mi:2" aria-label="카드 안 여백 늘리기">＋</button></span>
+    <button type="button" class="cb" id="mgr">여백 기본값</button>
     <span class="ths" role="group" aria-label="화면 밝기"><button type="button" class="cb" data-th="auto">자동</button><button type="button" class="cb" data-th="light">밝게</button><button type="button" class="cb" data-th="dark">어둡게</button></span>
   </div>
 </div></div>
 
 <main>
-  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘가− 가＋’는 글자 크기를 5%씩 바꾸고, 가운데 숫자를 누르면 크기를 바로 골라요. ↶ ↷ 는 ‘외웠어요’ 누른 것을 20번까지 되돌리거나 다시 실행해요.</p></details>
+  <details class="hint"><summary>사용법</summary><p>점선 밑줄이 있는 한자를 탭하면 읽는 법과 한자 풀이(한국 훈음·부수·노트 속 다른 단어)가 보여요. 흐리게 가려진 부분도 탭하면 보여요. 카드의 ‘외웠어요’를 누르면 ‘외운 것’으로 옮겨지고, 검색창 옆 ‘퀴즈 ▶’에서 못 외운 것을 시험처럼 풀어 볼 수 있어요. 스피커 단추를 누르면 일본어로 읽어 줘요. 문제 탭은 정답·해석·해설을 가려 두니 보기를 눌러 다시 풀어 보세요(‘정답 · 해설 모두 보기’로 한꺼번에 열 수 있어요). ‘집중 보기’는 카드를 한 장씩 넘겨 보고(컴퓨터는 ← → 키), ‘설정’에서 좌우 여백(바깥 · 카드 안)과 화면 밝기를 바꿀 수 있어요. ‘가− 가＋’는 글자 크기를 5%씩 바꾸고, 가운데 숫자를 누르면 크기를 바로 골라요. ↶ ↷ 는 ‘외웠어요’ 누른 것을 20번까지 되돌리거나 다시 실행해요.</p></details>
   <div class="rf" id="rf" hidden></div>
   <div class="list" id="list"></div>
 </main>
@@ -1113,6 +1116,12 @@ function fMove(d){const cs=list.querySelectorAll('.card');const i=Math.max(0,Mat
 fbtn.onclick=()=>{fc=!fc;try{localStorage.setItem('odap-fc',fc?'1':'0')}catch(_){}if(!fc){const id=fids[cur];draw();const el=id&&document.getElementById(id);if(el)el.scrollIntoView({block:'start'})}else{draw();window.scrollTo(0,0)}};
 fprev.onclick=()=>fMove(-1);fnext.onclick=()=>fMove(1);
 focusApply();
+/* 좌우 여백: 바깥(화면 가장자리 ↔ 카드) · 카드 안(카드 가장자리 ↔ 글) — 2px씩, 0~80 */
+const MG={mo:null,mi:null};try{for(const k in MG){const v=localStorage.getItem('odap-'+k);if(v!==null&&v!=='')MG[k]=Math.max(0,Math.min(80,+v||0))}}catch(_){}
+function mgDef(k){const r=document.documentElement,old=r.style.getPropertyValue('--'+k);r.style.removeProperty('--'+k);const el=k==='mo'?document.querySelector('main'):(list.querySelector('.card')||list);const v=Math.round((parseFloat(getComputedStyle(el).paddingLeft)||0)*(k==='mi'?ZS[zi]:1));if(old)r.style.setProperty('--'+k,old);return v}
+function mgApply(){const r=document.documentElement;for(const k in MG){if(MG[k]===null)r.style.removeProperty('--'+k);else r.style.setProperty('--'+k,MG[k]+'px');document.getElementById(k+'v').textContent=MG[k]===null?'기본':MG[k];try{MG[k]===null?localStorage.removeItem('odap-'+k):localStorage.setItem('odap-'+k,MG[k])}catch(_){}}}
+document.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>{const [k,d]=b.dataset.mg.split(':');const cur0=MG[k]===null?Math.round(mgDef(k)/2)*2:MG[k];MG[k]=Math.max(0,Math.min(80,cur0+(+d)));mgApply()});
+document.getElementById('mgr').onclick=()=>{MG.mo=MG.mi=null;mgApply()};mgApply();
 /* 화면 밝기: 자동(기기 설정) · 밝게 · 어둡게 */
 let th='auto';try{const v=localStorage.getItem('odap-th');if(v==='light'||v==='dark')th=v}catch(_){}
 function thApply(){const r=document.documentElement;if(th==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',th);document.querySelectorAll('[data-th]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===th));
